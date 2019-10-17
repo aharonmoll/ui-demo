@@ -11,27 +11,16 @@ import static com.gigaspaces.common.Constants.NUM_OF_CREW_MEMBERS_IN_FLIGHT;
 
 public class Service {
     private Integer id;
-    private List<Product> crewMembers;
+    private String name;
 
     public Service() {}
 
-    private Service(Integer flightNumber, List<Product> crewMembers) {
-        this.id = flightNumber;
-        this.crewMembers = crewMembers;
+    public String getName() {
+        return name;
     }
 
-    public Service(Integer flightNum) {
-        id = flightNum;
-    }
-
-    public static List<Product> createProducts(int numOfProducts) {
-        List<Product> crewMembers = new ArrayList<Product>(numOfProducts);
-
-        for (int i = 0; i < numOfProducts; i++) {
-            crewMembers.add(Product.createProduct(i));
-        }
-
-        return crewMembers;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Id
@@ -43,13 +32,5 @@ public class Service {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public List<Product> getProducts() {
-        return crewMembers;
-    }
-
-    public void setProducts(List<Product> crewMembers) {
-        this.crewMembers = crewMembers;
     }
 }

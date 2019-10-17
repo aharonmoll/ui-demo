@@ -25,10 +25,10 @@
     <modules>
         <module>common</module>
         <module>mirror</module>
-        <module>space</module>
-        <module>crew-members-feeder</module>
-        <module>flights-feeder</module>
-        <module>benchmark</module>
+        <module>data-processor</module>
+        <module>products-loader</module>
+        <module>batch-feeder</module>
+        <module>products-catalogue</module>
     </modules>
     <dependencies>
         <dependency>
@@ -81,11 +81,11 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.2-beta-2</version>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+            <!--<plugin>
+                &lt;!&ndash;<groupId>org.apache.maven.plugins</groupId>
                 <artifactId>xap-maven-plugin</artifactId>
-                <version>${gsVersion}</version>
-            </plugin>
+                <version>${gsVersion}</version>&ndash;&gt;
+            </plugin>-->
         </plugins>
     </build>
     <profiles>
