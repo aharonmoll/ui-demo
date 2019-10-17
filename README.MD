@@ -1,7 +1,7 @@
 # UI Demo
 
 #### Overview:
-* This is a Benchmark intended to test mirror datagrid under load
+* This is a ProductCatalogue intended to test mirror datagrid under load
 
 #### Project structure:
 ##### The project consist of the following pu's:
