@@ -1,4 +1,4 @@
-# Large Cluster Load Test
+# UI Demo
 
 #### Overview:
 * This is a Benchmark intended to test mirror datagrid under load
