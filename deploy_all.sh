@@ -18,8 +18,10 @@ fi
 
 
 
-${GS_DIR}/bin/gs.sh pu deploy --partitions=10 --backups=1 --max-instances-per-vm=1 products-catalog ${DIRNAME}/products-catalog/target/products-catalog.jar
+${GS_DIR}/bin/gs.sh pu deploy --partitions=10 --backups=1 --max-instances-per-vm=1 ProductsCatalog ${DIRNAME}/products-catalog/target/products-catalog.jar
 
-${GS_DIR}/bin/gs.sh pu deploy products-loader ${DIRNAME}/products-loader/target/products-loader.jar
+${GS_DIR}/bin/gs.sh pu deploy ProductsLoader ${DIRNAME}/products-loader/target/products-loader.jar
 
-${GS_DIR}/bin/gs.sh pu deploy products-feeder ${DIRNAME}/products-feeder/target/products-feeder.jar
+${GS_DIR}/bin/gs.sh pu deploy ProductsFeeder ${DIRNAME}/products-feeder/target/products-feeder.jar
+
+${GS_DIR}/bin/gs.sh pu deploy WebApplication ${DIRNAME}/web-application/target/web-application.jar

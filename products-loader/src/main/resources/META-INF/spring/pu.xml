@@ -45,5 +45,5 @@
     -->
     <bean id="dataFeeder" class="com.gigaspaces.products_loader.ProductsLoader" depends-on="gigaSpace">
     </bean>
-    
+
 </beans>

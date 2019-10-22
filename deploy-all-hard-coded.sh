@@ -16,9 +16,9 @@ fi
 #fi
 
 
-/home/user/Desktop/gigaspaces-xap-enterprise-15.0.0-m17-tue-49/bin/gs.sh pu deploy --partitions=10 --backups=1 --max-instances-per-vm=1 products-catalog /home/user/repositories/Gigaspaces/UIDemo/products-catalog/target/products-catalog.jar
-/home/user/Desktop/gigaspaces-xap-enterprise-15.0.0-m17-tue-49/bin/gs.sh pu deploy products-loader /home/user/repositories/Gigaspaces/UIDemo/products-loader/target/products-loader.jar
-/home/user/Desktop/gigaspaces-xap-enterprise-15.0.0-m17-tue-49/bin/gs.sh pu deploy products-feeder /home/user/repositories/Gigaspaces/UIDemo/products-feeder/target/products-feeder.jar
+/home/user/Desktop/gigaspaces-xap-enterprise-15.0.0-m17-tue-49/bin/gs.sh pu deploy --partitions=10 --backups=1 --max-instances-per-vm=1 products-catalog /home/user/repositories/Gigaspaces/ui-demo/products-catalog/target/products-catalog.jar
+/home/user/Desktop/gigaspaces-xap-enterprise-15.0.0-m17-tue-49/bin/gs.sh pu deploy products-loader /home/user/repositories/Gigaspaces/ui-demo/products-loader/target/products-loader.jar
+/home/user/Desktop/gigaspaces-xap-enterprise-15.0.0-m17-tue-49/bin/gs.sh pu deploy products-feeder /home/user/repositories/Gigaspaces/ui-demo/products-feeder/target/products-feeder.jar
 
 
 #${GS_DIR}/bin/gs.sh pu deploy mirror ${DIRNAME}/mirror/target/mirror.jar
