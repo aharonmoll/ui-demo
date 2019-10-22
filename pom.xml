@@ -26,7 +26,7 @@
         <module>products-catalog</module>
         <module>products-loader</module>
         <module>products-feeder</module>
-        <module>web-application</module>
+        <module>web-application1</module>
     </modules>
     <dependencies>
         <dependency>

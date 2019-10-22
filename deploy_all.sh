@@ -24,4 +24,4 @@ ${GS_DIR}/bin/gs.sh pu deploy ProductsLoader ${DIRNAME}/products-loader/target/p
 
 ${GS_DIR}/bin/gs.sh pu deploy ProductsFeeder ${DIRNAME}/products-feeder/target/products-feeder.jar
 
-${GS_DIR}/bin/gs.sh pu deploy WebApplication ${DIRNAME}/web-application/target/web-application.jar
+${GS_DIR}/bin/gs.sh pu deploy --partitions=2 WebApplication1 ${DIRNAME}/web-application1/target/web-application1.war
