@@ -17,12 +17,9 @@ fi
 
 
 
-${GS_DIR}/bin/gs.sh pu deploy mirror ${DIRNAME}/mirror/target/mirror.jar
 
-${GS_DIR}/bin/gs.sh pu deploy --partitions=2 --backups=1 --max-instances-per-vm=1 data-processor ${DIRNAME}/data-processor/target/data-processor.jar
+${GS_DIR}/bin/gs.sh pu deploy --partitions=10 --backups=1 --max-instances-per-vm=1 products-catalog ${DIRNAME}/products-catalog/target/products-catalog.jar
 
 ${GS_DIR}/bin/gs.sh pu deploy products-loader ${DIRNAME}/products-loader/target/products-loader.jar
 
-${GS_DIR}/bin/gs.sh pu deploy batch-feeder ${DIRNAME}/batch-feeder/target/batch-feeder.jar
-
-${GS_DIR}/bin/gs.sh pu deploy products-catalogue ${DIRNAME}/products-catalogue/target/products-catalogue.jar
+${GS_DIR}/bin/gs.sh pu deploy products-feeder ${DIRNAME}/products-feeder/target/products-feeder.jar

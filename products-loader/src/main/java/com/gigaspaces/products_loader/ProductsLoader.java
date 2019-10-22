@@ -20,29 +20,5 @@ import static com.gigaspaces.common.Constants.*;
  * <p>The scheduling uses the java.util.concurrent Scheduled Executor Service. It is started and
  * stopped based on Spring lifecycle events.
  */
-public class ProductsLoader implements InitializingBean, DisposableBean {
-
-    Logger log = Logger.getLogger(this.getClass().getName());
-
-    @GigaSpaceContext
-    private GigaSpace gigaSpace;
-
-    // This is the place to write static data into the space
-    public void afterPropertiesSet() throws Exception {
-        new Thread(this::populateSpaceWithProducts).start();
-    }
-
-    private void populateSpaceWithProducts() {
-        log.info("Start populating space with " +   NUM_OF_PRODUCT_OFFERS + " product's offers");
-        int numOfProductsInSpace = gigaSpace.count(new Product());
-
-        for (int id = numOfProductsInSpace; id < numOfProductsInSpace + NUM_OF_PRODUCT_OFFERS; id++) {
-            gigaSpace.write(Product.createProduct(id));
-        }
-
-        log.info("Finish populating space with product's offers");
-    }
-
-    public void destroy() throws Exception {
-    }
+public class ProductsLoader /*implements InitializingBean, DisposableBean*/ {
 }

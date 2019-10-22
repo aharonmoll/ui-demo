@@ -39,7 +39,7 @@
     -->
     <os-core:giga-space id="gigaSpace" space="space"/>
 
-    <bean id="benchmark" class="main.ProductCatalogue" depends-on="gigaSpace">
+    <bean id="benchmark" class="main.ProductsCatalog" depends-on="gigaSpace">
 
     </bean>
     

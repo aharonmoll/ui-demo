@@ -28,20 +28,20 @@ import static com.gigaspaces.common.Constants.*;
  * <p>The scheduling uses the java.util.concurrent Scheduled Executor Service. It is started and
  * stopped based on Spring lifecycle events.
  */
-public class BatchFeeder implements InitializingBean, DisposableBean {
+public class ProductsFeeder /*implements InitializingBean, DisposableBean*/ {
 
-    Logger logger = Logger.getLogger(this.getClass().getName());
+   /* Logger logger = Logger.getLogger(this.getClass().getName());
     private ScheduledExecutorService queriesService;
-
-    @GigaSpaceContext
+*/
+   /* @GigaSpaceContext
     private GigaSpace gigaSpace;
 
     // This is the place to write static data into the space
     public void afterPropertiesSet() {
         new Thread(this::run).start();
-    }
+    }*/
 
-    public void run() {
+    /*public void run() {
        // setupLogger();
         log("Start ProductCatalogue");
         try {
@@ -107,5 +107,5 @@ public class BatchFeeder implements InitializingBean, DisposableBean {
 
 
     public void destroy() throws Exception {
-    }
+    }*/
 }
