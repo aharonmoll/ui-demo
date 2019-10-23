@@ -43,7 +43,7 @@
     <!--
         The Data feeder bean, writing new Data objects to the space in a constant interval.
     -->
-    <bean id="dataFeeder" class="com.gigaspaces.products_loader.ProductsLoader" depends-on="gigaSpace">
+    <bean id="dataFeeder" class="com.gigaspaces.products_loader.ProductsLoader"  depends-on="gigaSpace">
     </bean>
 
 </beans>

@@ -64,7 +64,7 @@
         to perform the initial load operation from the database when the Space starts up.
     -->
     <os-core:space id="space" url="/./space"
-                   mirror="true">
+                   mirror="false">
         <!--mirror="true" space-data-source="hibernateSpaceDataSource">-->
         <os-core:properties>
             <props>

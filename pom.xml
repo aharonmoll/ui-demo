@@ -23,6 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <modules>
+        <module>common</module>
         <module>products-catalog</module>
         <module>products-loader</module>
         <module>products-feeder</module>
