@@ -1,4 +1,4 @@
-package com.gigaspaces.webapplication2.web;
+package com.gigaspaces.web_application.web;
 
 
 import com.gigaspaces.common.Product;
