@@ -1,4 +1,5 @@
-package com.gigaspaces.web;
+package com.gigaspaces.webapplication2.web;
+
 
 import com.gigaspaces.common.Product;
 import com.j_spaces.core.client.SQLQuery;
@@ -8,12 +9,12 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.logging.Logger;
-import static com.gigaspaces.common.Constants.NUM_OF_ENTITIES;
+
 import static com.gigaspaces.common.Constants.PRODUCT_FEEDER_PERIOD_TIME_UNIT;
 import static com.gigaspaces.common.Constants.MILLISECONDS_IN_SECOND;
 import static com.gigaspaces.common.Constants.SECONDS_IN_MINUTE;
 
-public class WebApplication1 implements InitializingBean, DisposableBean {
+public class WebApplication implements InitializingBean, DisposableBean {
     Logger log = Logger.getLogger(this.getClass().getName());
 
     @GigaSpaceContext

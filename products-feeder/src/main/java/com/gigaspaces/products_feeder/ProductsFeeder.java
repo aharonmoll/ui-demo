@@ -25,10 +25,10 @@ public class ProductsFeeder implements InitializingBean, DisposableBean {
     }
 
     private void updateProducts() {
-        Product [] products = gigaSpace.readMultiple(new Product(), NUM_OF_ENTITIES); //ToDo- remember it's multiply by partitions
+        //Product [] products = gigaSpace.readMultiple(new Product(), NUM_OF_ENTITIES); //ToDo- remember it's multiply by partitions
 
         while(true) {
-            log.info("start 5 minutes"); //Todo -this for me
+            log.info("**********************start 5 minutes"); //Todo -this for me
             long startTime = System.currentTimeMillis();
             long currentTime = 0;
             boolean toStop = false;
@@ -42,13 +42,12 @@ public class ProductsFeeder implements InitializingBean, DisposableBean {
                     toStop = true;
                 }
             }
-            log.info("5 minutes passed"); //Todo -this for me
+            log.info("******************5 minutes passed"); //Todo -this for me
         }
     }
 
 
     @Override
     public void destroy() throws Exception {
-
     }
 }

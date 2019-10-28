@@ -92,7 +92,7 @@
     <!--
         The data processor bean
     -->
-    <!--<bean id="dataProcessor" class="com.gigaspaces.app.persistent_event_processing.processor.Processor"/>-->
+    <!--<bean id="dataProcessor" class="com.gigaspaces.ui_demo.processor.Processor"/>-->
 
     <!--
         A polling event container that perfoms (by default) polling take operations against
@@ -104,7 +104,7 @@
     <!--<os-events:polling-container id="dataProcessorPollingEventContainer" giga-space="gigaSpace">-->
     <!--<os-events:tx-support tx-manager="transactionManager"/>-->
     <!--<os-core:template>-->
-    <!--<bean class="com.gigaspaces.app.persistent_event_processing.common.Data">-->
+    <!--<bean class="com.gigaspaces.ui_demo.common.Data">-->
     <!--<property name="processed" value="false"/>-->
     <!--</bean>-->
     <!--</os-core:template>-->

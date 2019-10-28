@@ -22,6 +22,6 @@ ${GS_DIR}/bin/gs.sh pu deploy --partitions=2 --backups=1 --max-instances-per-vm=
 
 ${GS_DIR}/bin/gs.sh pu deploy ProductsLoader ${DIRNAME}/products-loader/target/products-loader.jar
 
-${GS_DIR}/bin/gs.sh pu deploy ProductsFeeder ${DIRNAME}/products-feeder/target/products-feeder.jar
+#${GS_DIR}/bin/gs.sh pu deploy ProductsFeeder ${DIRNAME}/products-feeder/target/products-feeder.jar
 
-${GS_DIR}/bin/gs.sh pu deploy --partitions=2 WebApplication1 ${DIRNAME}/web-application1/target/web-application1.war
+${GS_DIR}/bin/gs.sh pu deploy --partitions=2 WebApplication ${DIRNAME}/web-application/target/web-application.war
