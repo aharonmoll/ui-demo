@@ -28,6 +28,7 @@
         <module>products-loader</module>
         <module>products-feeder</module>
         <module>web-application</module>
+        <module>mirror</module>
     </modules>
     <dependencies>
         <dependency>

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.InitializingBean;
 import java.util.logging.Logger;
 
 import static com.gigaspaces.common.Constants.PRODUCT_FEEDER_PERIOD_TIME_UNIT;
+import static com.gigaspaces.common.Constants.NUM_OF_ENTITIES_TO_READ;
 import static com.gigaspaces.common.Constants.MILLISECONDS_IN_SECOND;
 import static com.gigaspaces.common.Constants.SECONDS_IN_MINUTE;
 
@@ -35,7 +36,7 @@ public class WebApplication implements InitializingBean, DisposableBean {
             boolean toStop = false;
             while (((currentTime - startTime) < (PRODUCT_FEEDER_PERIOD_TIME_UNIT * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE) && !toStop)) {
                 long iterationStartTime = System.currentTimeMillis();
-                gigaSpace.readMultiple(new SQLQuery<>(Product.class, null), 1000); //Todo- many types of read multiple
+                gigaSpace.readMultiple(new SQLQuery<>(Product.class, null), NUM_OF_ENTITIES_TO_READ); //Todo- many types of read multiple
                 currentTime = System.currentTimeMillis();
                 long differenceTime = currentTime - iterationStartTime;
                 if ((differenceTime + currentTime) > (startTime + PRODUCT_FEEDER_PERIOD_TIME_UNIT * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE)) {
