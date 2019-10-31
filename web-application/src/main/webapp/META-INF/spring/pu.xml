@@ -14,25 +14,19 @@
         A bean representing a space (an IJSpace implementation).
         Note, we perform a lookup on the space since we are working against a remote space.
     -->
-    <os-core:space-proxy id="space" name="mySpace" lookup-timeout="20000"/>
+    <os-core:space-proxy id="space" space-name="space"/>
 
-    <os-core:local-cache id="localCache" space="space"/>
+
     <!--
    Enables the usage of @GigaSpaceContext annotation based injection.
 -->
     <os-core:giga-space-context/>
 
     <!--
-        A bean representing a space (an IJSpace implementation).
-
-        Note, we perform a lookup on the space since we are working against a remote space.
-    -->
-    <os-core:space id="space" url="jini://*/*/space" />
-
-    <!--
         OpenSpaces simplified space API built on top of IJSpace/JavaSpace.
     -->
     <os-core:giga-space id="gigaSpace" space="space"/>
+
     <bean id="WebApplication" class="com.gigaspaces.web_application.web.WebApplication"  depends-on="gigaSpace">
     </bean>
 

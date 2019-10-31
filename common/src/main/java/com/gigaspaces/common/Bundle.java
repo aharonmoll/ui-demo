@@ -2,21 +2,21 @@ package com.gigaspaces.common;
 
 import com.gigaspaces.annotation.pojo.SpaceId;
 
-public class Product {
+public class Bundle {
     private Integer id;
     private String name;
     //private Integer quantity;
 
-    public Product() {
-    }
-
-    public Product(Integer id, String name) {
+    public Bundle(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public static Product createProduct(int id) {
-        return new Product(id, RandomUtils.nextString());
+    public Bundle() {
+    }
+
+    public static Bundle createBundle(int id) {
+        return new Bundle(id, RandomUtils.nextString());
     }
 
     @SpaceId
@@ -35,4 +35,7 @@ public class Product {
     public void setName(String name) {
         this.name = name;
     }
+
 }
+
+
