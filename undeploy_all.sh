@@ -16,7 +16,7 @@ if [[ -n "${SERVER}" ]]; then
 fi
 
 
-cd ${GS_DIR}
+cd ${GS_DIR}/bin
 
 totalPus=$(./gs.sh pu list | grep "Processing Units:" | awk '{ print $3 }')
 deployedPus=$(./gs.sh pu list | head -6 | tail -4 | awk '{ print $1 }')
