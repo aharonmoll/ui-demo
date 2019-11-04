@@ -38,7 +38,10 @@ public class ProductsLoader implements InitializingBean, DisposableBean {
         long startTime = System.currentTimeMillis();
         long currentTime = 0;
         boolean toStop = false;
-        while (((currentTime - startTime) < (TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE) && !toStop)) {
+        int maxEntries = 100_000;
+        int current = 0;
+
+        while (current <= maxEntries) {
             long iterationStartTime = System.currentTimeMillis();
 
             Product[] products = new Product[NUM_OF_PRODUCTS_TO_LOAD];
@@ -47,6 +50,8 @@ public class ProductsLoader implements InitializingBean, DisposableBean {
                 products[i] = Product.createProduct(id);
                 id++;
             }
+
+            current += NUM_OF_PRODUCTS_TO_LOAD;
 
             gigaSpace.writeMultiple(products);
 
