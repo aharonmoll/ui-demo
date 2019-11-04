@@ -2,29 +2,31 @@ package com.gigaspaces.common;
 
 import com.gigaspaces.annotation.pojo.SpaceId;
 
-public class Bundle {
-    private Integer id;
-    private String name;
-    //private Integer quantity;
 
-    public Bundle(Integer id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+public class Bundle {
+
+    private String id;
+    private String name;
+    private byte[] bytes = new byte[1000];
+    //private Integer quantity;
 
     public Bundle() {
     }
 
-    public static Bundle createBundle(int id) {
-        return new Bundle(id, RandomUtils.nextString());
+    public Bundle(String name) {
+        this.name = name;
     }
 
-    @SpaceId
-    public Integer getId() {
+    public static Bundle createBundle() {
+        return new Bundle(RandomUtils.nextString());
+    }
+
+    @SpaceId(autoGenerate = true)  //Todo- when it gets the id? not in setID
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -36,6 +38,14 @@ public class Bundle {
         this.name = name;
     }
 
+
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
 }
 
 

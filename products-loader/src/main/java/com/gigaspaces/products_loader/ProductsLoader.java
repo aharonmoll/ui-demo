@@ -9,7 +9,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import java.util.logging.Logger;
 
-import static com.gigaspaces.common.Constants.NUM_OF_PRODUCTS_TO_LOAD; //why import static?????
+import static com.gigaspaces.common.Constants.*;
 import static org.openspaces.extensions.QueryExtension.max;
 
 
@@ -26,23 +26,43 @@ public class ProductsLoader implements InitializingBean, DisposableBean {
     }
 
     private void populateSpaceWithProducts() {
-        log.info("Start populating space with " + NUM_OF_PRODUCTS_TO_LOAD + " products");
-
         SQLQuery<Product> query = new SQLQuery<>(Product.class, "");
 
         int highestId = 0;
-        if(gigaSpace.count(new Product()) > 0){
+        if (gigaSpace.count(new Product()) > 0) {
             highestId = max(gigaSpace, query, "id"); // Todo- this returns null pointer exception if no products in space
         }
         int id = highestId + 1;
-        System.out.println("+++++++++++++++++++++++++++++++++highest id is " + highestId);
-        for (int i = 0; i < NUM_OF_PRODUCTS_TO_LOAD ; i++) {
-            gigaSpace.write(Product.createProduct(id));
-            id++;
-        }
+        log.info("++++++++++++++++++++++++++++Product: starts writing for 5 minutes");
 
-        log.info("Finish populating space with products");
-        System.out.println("++++++++++++++++++++++++++++++after populate highest id is " + id);
+        long startTime = System.currentTimeMillis();
+        long currentTime = 0;
+        boolean toStop = false;
+        while (((currentTime - startTime) < (TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE) && !toStop)) {
+            long iterationStartTime = System.currentTimeMillis();
+
+            Product[] products = new Product[NUM_OF_PRODUCTS_TO_LOAD];
+
+            for (int i = 0; i < NUM_OF_PRODUCTS_TO_LOAD; i++) {
+                products[i] = Product.createProduct(id);
+                id++;
+            }
+
+            gigaSpace.writeMultiple(products);
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            currentTime = System.currentTimeMillis();
+
+            long differenceTime = currentTime - iterationStartTime;
+            if ((differenceTime + currentTime) > (startTime + TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE)) {
+                toStop = true;
+            }
+        }
+        log.info("+++++++++++++++++++++++++Product: finished writing for 5 minutes, highest id is: " + id);
     }
 
 
