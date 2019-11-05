@@ -1,4 +1,4 @@
-//var baseUrl = "http://localhost:8080/web"
+//var baseUrl = "http://localhost:8080/web/"
 var baseUrl = ""
 
 function clearSelect(select, keep) {
@@ -52,7 +52,7 @@ function createContainer(elem) {
     }
 
     elem.disabled = true;
-    $.post( baseUrl + "/container?hostName="+selectedHost)
+    $.post( baseUrl + "container?hostName="+selectedHost)
      .done(function( data ) {
         result.html(data);
         elem.disabled = false;
@@ -75,7 +75,7 @@ function removeContainer(elem) {
 
     elem.disabled = true;
     $.ajax({
-        url: baseUrl + "/container?containerId="+selectedContainer,
+        url: baseUrl + "container?containerId="+selectedContainer,
         type: 'DELETE',
         success: function( data ) {
                          selects[1].remove(selects[1].selectedIndex);
@@ -100,7 +100,7 @@ function scaleUp(elem) {
     }
 
     elem.disabled = true;
-    $.post( baseUrl + "/service/scale?upOrDown=up&serviceName="+selectedService)
+    $.post( baseUrl + "service/scale?upOrDown=up&serviceName="+selectedService)
      .done(function( data ) {
         result.html(data);
         elem.disabled = false;
@@ -123,7 +123,7 @@ function scaleDown(elem) {
     }
     elem.disabled = true;
 
-    $.post( baseUrl + "/service/scale?upOrDown=down&serviceName="+selectedService)
+    $.post( baseUrl + "service/scale?upOrDown=down&serviceName="+selectedService)
      .done(function( data ) {
         result.html(data);
         elem.disabled = false;
@@ -160,7 +160,7 @@ $(document).ready(function() {
         }
     });
 
-    $.get( baseUrl + "/services", function( data ) {
+    $.get( baseUrl + "services", function( data ) {
 
       allServices = data;
       statefulServices = data.filter(function (service) {
@@ -198,7 +198,7 @@ $(document).ready(function() {
 
     });
 
-    $.get( baseUrl + "/hosts", function( data ) {
+    $.get( baseUrl + "hosts", function( data ) {
         hosts = data;
         $(".hosts").each(function (i, select) {
             clearSelect(select, 1);
