@@ -29,6 +29,7 @@
         <module>products-feeder</module>
         <module>web-application</module>
         <module>mirror</module>
+        <module>demo-app</module>
     </modules>
     <dependencies>
         <dependency>
