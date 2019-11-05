@@ -30,10 +30,10 @@ public class ProductsLoader implements InitializingBean, DisposableBean {
 
         int highestId = 0;
         if (gigaSpace.count(new Product()) > 0) {
-            highestId = max(gigaSpace, query, "id"); // Todo- this returns null pointer exception if no products in space
+            highestId = max(gigaSpace, query, "id");
         }
         int id = highestId + 1;
-        log.info("++++++++++++++++++++++++++++Product: starts writing for 5 minutes");
+        log.info("Start populating space with products for 5 minutes");
 
         long startTime = System.currentTimeMillis();
         long currentTime = 0;
@@ -67,7 +67,7 @@ public class ProductsLoader implements InitializingBean, DisposableBean {
                 toStop = true;
             }
         }
-        log.info("+++++++++++++++++++++++++Product: finished writing for 5 minutes, highest id is: " + id);
+        log.info("Finish populating space with products");
     }
 
 
