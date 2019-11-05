@@ -33,7 +33,7 @@ public class ProductsLoader implements InitializingBean, DisposableBean {
             highestId = max(gigaSpace, query, "id");
         }
         int id = highestId + 1;
-        log.info("Start populating space with products for 5 minutes");
+        log.info("Start populating space with products");
 
         long startTime = System.currentTimeMillis();
         long currentTime = 0;

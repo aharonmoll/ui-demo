@@ -1,6 +1,7 @@
 package com.gigaspaces.web_application.web;
 
 
+import com.gigaspaces.async.AsyncFuture;
 import com.gigaspaces.common.Bundle;
 import com.gigaspaces.common.Product;
 import com.j_spaces.core.client.SQLQuery;
@@ -11,6 +12,9 @@ import org.openspaces.core.space.SpaceProxyConfigurer;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
 import static com.gigaspaces.common.Constants.*;
@@ -36,43 +40,64 @@ public class WebApplication implements InitializingBean, DisposableBean {
     }
 
     private void doQueries() {
-        while(true) {
+        while (true) {
             long startTime = System.currentTimeMillis();
-            long endTime = startTime + TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE;
             long currentTime = 0;
             boolean toStop = false;
 
             while (((currentTime - startTime) < (TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE) && !toStop)) {
                 long iterationStartTime = System.currentTimeMillis();
-                gigaSpace.readMultiple(new SQLQuery<>(Product.class, null), NUM_OF_ENTITIES_TO_READ );
+                gigaSpace.readMultiple(new SQLQuery<>(Product.class, null), NUM_OF_ENTITIES_TO_READ);
                 currentTime = System.currentTimeMillis();
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 long differenceTime = currentTime - iterationStartTime;
-
-                if ((differenceTime + currentTime) > endTime) {
-                    log.info("sleeping " + (endTime - currentTime));
-                    try {
-                        sleep(endTime - currentTime);
-                    } catch (InterruptedException e) {
-                        return;
-                    }
+                if ((differenceTime + currentTime) > (startTime + TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE)) {
                     toStop = true;
                 }
             }
         }
     }
 
-    public void sleep(long millis) throws InterruptedException{
+    public void doCPUAlert() {
+        AsyncFuture<Integer> future = gigaSpace.execute(new CPUAlertTask(1));
         try {
-            Thread.sleep(millis);
+            int result = future.get(1, TimeUnit.HOURS); //Todo- change time
+            System.out.println("result is" + result);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw e;
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void doRAMAlert() {
+        AsyncFuture<Integer> future = gigaSpace.execute(new RAMAlertTask(1));
+        try {
+            int result = future.get(1, TimeUnit.HOURS); //Todo- change time
+            System.out.println("result is" + result);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
         }
     }
 
-    public void doCPUAlert(){
+    @Override
+    public void destroy() throws Exception {
+    }
+
+    /*public void doCPUAlert(){
         new Thread(this::doCPUAlert2).start();
-        log.info("doCPUAlert: starts 5 minutes");
+        log.info("doCPUAlert: Starts 5 minutes");
         long startTime = System.currentTimeMillis();
         long currentTime = 0;
         boolean toStop = false;
@@ -87,9 +112,9 @@ public class WebApplication implements InitializingBean, DisposableBean {
             }
         }
        //log.info("doCPUAlert: finished 5 minutes");
-    }
+    }*/
 
-    private void doCPUAlert2(){
+    /*private void doCPUAlert2() {
         long startTime = System.currentTimeMillis();
         long currentTime = 0;
         boolean toStop = false;
@@ -103,8 +128,8 @@ public class WebApplication implements InitializingBean, DisposableBean {
             }
         }
     }
-
-    public void doRAMAlert(){
+*/
+    /*public void doRAMAlert() {
         //new Thread(this::doRAMAlert2).start();
         long startTime = System.currentTimeMillis();
         long currentTime = 0;
@@ -129,9 +154,9 @@ public class WebApplication implements InitializingBean, DisposableBean {
             }
         }
         log.info("Bundle: finished writing after 5 minutes");
-    }
+    }*/
 
-    private void doRAMAlert2() {
+    /*private void doRAMAlert2() {
         long startTime = System.currentTimeMillis();
         long currentTime = 0;
         boolean toStop = false;
@@ -154,8 +179,6 @@ public class WebApplication implements InitializingBean, DisposableBean {
                 toStop = true;
             }
         }
-    }
+    }*/
 
-    @Override
-    public void destroy() throws Exception { }
 }
