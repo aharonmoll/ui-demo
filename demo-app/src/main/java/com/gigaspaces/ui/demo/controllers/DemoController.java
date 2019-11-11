@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import static com.gigaspaces.common.Constants.*;
 
 @RestController
 public class DemoController {
@@ -26,6 +27,7 @@ public class DemoController {
 
     public DemoController() {
         Configuration.getDefaultApiClient().setBasePath("http://192.168.35.164:8090/v2"); //TODO make configurable
+        //Configuration.getDefaultApiClient().setBasePath("http://localhost:8090/v2"); //TODO make configurable
         processingUnitsApi = new ProcessingUnitsApi();
         containersApi = new ContainersApi();
         hostsApi = new HostsApi();
@@ -70,6 +72,27 @@ public class DemoController {
         return "GSC created on " + hostName;
     }
 
+    @PostMapping(value = "/pu")
+    public String terminateAndStartContainer(@RequestParam String puName, @RequestParam String instanceId, @RequestParam String time) throws ApiException {
+        int duration = Integer.parseInt(time);
+        ProcessingUnitInstance puInstance = processingUnitsApi.pusIdInstancesInstanceIdGet(puName, instanceId);
+        String containerId = puInstance.getContainerId();
+        String hostName = puInstance.getHostId();
+        System.out.println("GSC id is " + containerId + "host name is " + hostName);
+
+        System.out.println(removeContainer((containerId)));
+
+        try {
+            Thread.sleep(duration * MILLISECONDS_IN_SECOND );
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+       /* System.out.println(createContainer(hostName));
+        return "";*/
+        return createContainer(hostName);
+    }
+
     @DeleteMapping(value = "/container")
     public String removeContainer(@RequestParam String containerId) throws ApiException {
         containersApi.containersIdDelete(containerId);
@@ -80,7 +103,5 @@ public class DemoController {
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
         return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
-
 
 }

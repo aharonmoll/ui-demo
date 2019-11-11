@@ -54,23 +54,6 @@ public class CPUAlertTask implements Task<Integer>, TaskRoutingProvider {
         return 0;
     }
 
-    private void doCPUAlert2() {
-        System.out.println("in second thread");
-        long startTime = System.currentTimeMillis();
-        long currentTime = 0;
-        boolean toStop = false;
-        while (((currentTime - startTime) < (2 * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE) && !toStop)) {
-            long iterationStartTime = System.currentTimeMillis();
-            gigaSpace.readMultiple(new SQLQuery<>(Product.class, null), NUM_OF_ENTITIES_TO_READ);
-            currentTime = System.currentTimeMillis();
-            long differenceTime = currentTime - iterationStartTime;
-            if ((differenceTime + currentTime) > (startTime + 2 * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE)) {
-                toStop = true;
-            }
-        }
-    }
-
-
     public Integer getRouting() {
         return this.value;
     }

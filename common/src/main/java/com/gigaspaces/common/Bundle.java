@@ -2,6 +2,7 @@ package com.gigaspaces.common;
 
 import com.gigaspaces.annotation.pojo.SpaceId;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -36,7 +37,6 @@ public class Bundle {
         this.name = name;
     }
 
-
     public byte[] getBytes() {
         return bytes;
     }
@@ -44,6 +44,7 @@ public class Bundle {
     public void setBytes(byte[] bytes) {
         this.bytes = bytes;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -56,7 +57,7 @@ public class Bundle {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName());
+        return Objects.hash(/*getId(),*/ getName());
     }
 }
 

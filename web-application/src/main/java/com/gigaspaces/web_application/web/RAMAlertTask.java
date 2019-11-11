@@ -8,7 +8,7 @@ import org.openspaces.core.executor.TaskRoutingProvider;
 import static com.gigaspaces.common.Constants.*;
 import com.gigaspaces.common.Bundle;
 
-@SupportCodeChange(id="3")
+@SupportCodeChange(id="1")
 public class RAMAlertTask implements Task<Integer>, TaskRoutingProvider {
     private int value;
 
@@ -25,7 +25,7 @@ public class RAMAlertTask implements Task<Integer>, TaskRoutingProvider {
         long startTime = System.currentTimeMillis();
         long currentTime = 0;
         boolean toStop = false;
-        System.out.println("Start writing Bundles to space3");
+        System.out.println("Start writing Bundles to space: version1");
 
         while (((currentTime - startTime) < (TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE) && !toStop)) {
             long iterationStartTime = System.currentTimeMillis();
@@ -48,9 +48,14 @@ public class RAMAlertTask implements Task<Integer>, TaskRoutingProvider {
         System.out.println("Finish writing with " + count + " Bundles");
 
         gigaSpace.clear(new Bundle());
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         int count2 = gigaSpace.count(new Bundle());
-        System.out.println("After clear: " + count + "Bundles");
+        System.out.println("After clear: " + count2 + "Bundles");
 
         System.gc();
         System.out.println("Cleanup completed...");

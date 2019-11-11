@@ -62,10 +62,10 @@ public class WebApplication implements InitializingBean, DisposableBean {
     }
 
     public void doCPUAlert() {
-        AsyncFuture<Integer> future = gigaSpace.execute(new CPUAlertTask(0));
+        AsyncFuture<Integer> future = gigaSpace.execute(new CPUAlertTask(1));
         try {
             int result = future.get(6, TimeUnit.MINUTES); //Todo- change time
-            log.info("result is" + result);
+            log.info("CPU alert finished");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -73,14 +73,13 @@ public class WebApplication implements InitializingBean, DisposableBean {
         } catch (TimeoutException e) {
             e.printStackTrace();
         }
-
     }
 
     public void doRAMAlert() {
         AsyncFuture<Integer> future = gigaSpace.execute(new RAMAlertTask(0));
         try {
             int result = future.get(6, TimeUnit.MINUTES); //Todo- change time
-           log.info("result is" + result);
+            log.info("RAM alert finished");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -93,91 +92,4 @@ public class WebApplication implements InitializingBean, DisposableBean {
     @Override
     public void destroy() throws Exception {
     }
-
-    /*public void doCPUAlert(){
-        new Thread(this::doCPUAlert2).start();
-        log.info("doCPUAlert: Starts 5 minutes");
-        long startTime = System.currentTimeMillis();
-        long currentTime = 0;
-        boolean toStop = false;
-
-        while (((currentTime - startTime) < (TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE) && !toStop)) {
-            long iterationStartTime = System.currentTimeMillis();
-            gigaSpace.readMultiple(new SQLQuery<>(Product.class, null), NUM_OF_ENTITIES_TO_READ);
-            currentTime = System.currentTimeMillis();
-            long differenceTime = currentTime - iterationStartTime;
-            if ((differenceTime + currentTime) > (startTime + TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE)) {
-                toStop = true;
-            }
-        }
-       //log.info("doCPUAlert: finished 5 minutes");
-    }*/
-
-    /*private void doCPUAlert2() {
-        long startTime = System.currentTimeMillis();
-        long currentTime = 0;
-        boolean toStop = false;
-        while (((currentTime - startTime) < (TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE) && !toStop)) {
-            long iterationStartTime = System.currentTimeMillis();
-            gigaSpace.readMultiple(new SQLQuery<>(Product.class, null), NUM_OF_ENTITIES_TO_READ);
-            currentTime = System.currentTimeMillis();
-            long differenceTime = currentTime - iterationStartTime;
-            if ((differenceTime + currentTime) > (startTime + TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE)) {
-                toStop = true;
-            }
-        }
-    }
-*/
-    /*public void doRAMAlert() {
-        //new Thread(this::doRAMAlert2).start();
-        long startTime = System.currentTimeMillis();
-        long currentTime = 0;
-        boolean toStop = false;
-
-        while (((currentTime - startTime) < (TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE) && !toStop)) {
-            long iterationStartTime = System.currentTimeMillis();
-
-            Bundle[] bundles = new Bundle[NUM_OF_BUNDLES_TO_WRITE];
-
-            for (int i = 0; i < NUM_OF_BUNDLES_TO_WRITE; i++) {
-                bundles[i] = Bundle.createBundle();
-            }
-
-            gigaSpace.writeMultiple(bundles);
-
-            currentTime = System.currentTimeMillis();
-
-            long differenceTime = currentTime - iterationStartTime;
-            if ((differenceTime + currentTime) > (startTime + TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE)) {
-                toStop = true;
-            }
-        }
-        log.info("Bundle: finished writing after 5 minutes");
-    }*/
-
-    /*private void doRAMAlert2() {
-        long startTime = System.currentTimeMillis();
-        long currentTime = 0;
-        boolean toStop = false;
-
-        while (((currentTime - startTime) < (TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE) && !toStop)) {
-            long iterationStartTime = System.currentTimeMillis();
-
-            Bundle[] bundles = new Bundle[NUM_OF_BUNDLES_TO_WRITE];
-
-            for (int i = 0; i < NUM_OF_BUNDLES_TO_WRITE; i++) {
-                bundles[i] = Bundle.createBundle();
-            }
-
-            gigaSpace.writeMultiple(bundles);
-
-            currentTime = System.currentTimeMillis();
-
-            long differenceTime = currentTime - iterationStartTime;
-            if ((differenceTime + currentTime) > (startTime + TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE)) {
-                toStop = true;
-            }
-        }
-    }*/
-
 }
