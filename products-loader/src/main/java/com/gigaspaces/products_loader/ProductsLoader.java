@@ -67,7 +67,7 @@ public class ProductsLoader implements InitializingBean, DisposableBean {
                 toStop = true;
             }
         }
-        log.info("Finish populating space with products");
+        log.info("Finish populating space with " + gigaSpace.count(new Product()) + " products");
     }
 
 

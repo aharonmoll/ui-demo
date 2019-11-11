@@ -2,7 +2,6 @@ package com.gigaspaces.web_application.web;
 
 
 import com.gigaspaces.async.AsyncFuture;
-import com.gigaspaces.common.Bundle;
 import com.gigaspaces.common.Product;
 import com.j_spaces.core.client.SQLQuery;
 import org.openspaces.core.GigaSpace;
@@ -29,8 +28,8 @@ public class WebApplication implements InitializingBean, DisposableBean {
     }
 
     public WebApplication(String spaceName, String groupName) {
-        //this.gigaSpace = new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName).lookupLocators("192.168.35.164")).gigaSpace();
-        this.gigaSpace = new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName).lookupGroups(groupName)).gigaSpace();
+        this.gigaSpace = new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName).lookupLocators("192.168.35.164")).gigaSpace();
+        //this.gigaSpace = new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName).lookupGroups(groupName)).gigaSpace();
     }
 
 
@@ -63,10 +62,10 @@ public class WebApplication implements InitializingBean, DisposableBean {
     }
 
     public void doCPUAlert() {
-        AsyncFuture<Integer> future = gigaSpace.execute(new CPUAlertTask(1));
+        AsyncFuture<Integer> future = gigaSpace.execute(new CPUAlertTask(0));
         try {
-            int result = future.get(1, TimeUnit.HOURS); //Todo- change time
-            System.out.println("result is" + result);
+            int result = future.get(6, TimeUnit.MINUTES); //Todo- change time
+            log.info("result is" + result);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -78,10 +77,10 @@ public class WebApplication implements InitializingBean, DisposableBean {
     }
 
     public void doRAMAlert() {
-        AsyncFuture<Integer> future = gigaSpace.execute(new RAMAlertTask(1));
+        AsyncFuture<Integer> future = gigaSpace.execute(new RAMAlertTask(0));
         try {
-            int result = future.get(1, TimeUnit.HOURS); //Todo- change time
-            System.out.println("result is" + result);
+            int result = future.get(6, TimeUnit.MINUTES); //Todo- change time
+           log.info("result is" + result);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

@@ -8,7 +8,7 @@ import org.openspaces.core.executor.TaskRoutingProvider;
 import static com.gigaspaces.common.Constants.*;
 import com.gigaspaces.common.Bundle;
 
-@SupportCodeChange(id="2")
+@SupportCodeChange(id="3")
 public class RAMAlertTask implements Task<Integer>, TaskRoutingProvider {
     private int value;
 
@@ -25,18 +25,17 @@ public class RAMAlertTask implements Task<Integer>, TaskRoutingProvider {
         long startTime = System.currentTimeMillis();
         long currentTime = 0;
         boolean toStop = false;
-        System.out.println("Start writing Bundles to space44444");
+        System.out.println("Start writing Bundles to space3");
 
         while (((currentTime - startTime) < (TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE) && !toStop)) {
             long iterationStartTime = System.currentTimeMillis();
-
             Bundle[] bundles = new Bundle[NUM_OF_BUNDLES_TO_WRITE];
 
             for (int i = 0; i < NUM_OF_BUNDLES_TO_WRITE; i++) {
                 bundles[i] = Bundle.createBundle();
             }
 
-           gigaSpace.writeMultiple(bundles);
+            gigaSpace.writeMultiple(bundles);
 
             currentTime = System.currentTimeMillis();
 
@@ -45,8 +44,16 @@ public class RAMAlertTask implements Task<Integer>, TaskRoutingProvider {
                 toStop = true;
             }
         }
-        int count = gigaSpace.count(Bundle.class);
-        System.out.println("Finish writing " + count + " Bundles");
+        int count = gigaSpace.count(new Bundle());
+        System.out.println("Finish writing with " + count + " Bundles");
+
+        gigaSpace.clear(new Bundle());
+
+        int count2 = gigaSpace.count(new Bundle());
+        System.out.println("After clear: " + count + "Bundles");
+
+        System.gc();
+        System.out.println("Cleanup completed...");
 
         return count;
     }
