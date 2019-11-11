@@ -9,12 +9,17 @@ import com.gigaspaces.rest.client.java.model.CreateContainerRequest;
 import com.gigaspaces.rest.client.java.model.Host;
 import com.gigaspaces.rest.client.java.model.ProcessingUnit;
 import com.gigaspaces.rest.client.java.model.ProcessingUnitInstance;
+import com.gigaspaces.start.SystemInfo;
+import com.gigaspaces.start.manager.XapManagerClusterInfo;
+import com.gigaspaces.start.manager.XapManagerConfig;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 import static com.gigaspaces.common.Constants.*;
 
 @RestController
@@ -26,11 +31,29 @@ public class DemoController {
     private final HostsApi hostsApi;
 
     public DemoController() {
-        Configuration.getDefaultApiClient().setBasePath("http://192.168.35.164:8090/v2"); //TODO make configurable
-        //Configuration.getDefaultApiClient().setBasePath("http://localhost:8090/v2"); //TODO make configurable
+        String restServer;
+        XapManagerClusterInfo managerClusterInfo = SystemInfo.singleton().getManagerClusterInfo();
+        if (!managerClusterInfo.isEmpty()) {
+            XapManagerConfig[] servers = managerClusterInfo.getServers();
+            if (servers.length == 1) {
+                restServer = servers[0].getHost();
+            } else {
+                restServer = servers[0].getHost();
+            }
+        } else {
+            restServer = "localhost";
+        }
+
+        System.out.println("Using REST server running on " + restServer);
+        Configuration.getDefaultApiClient().setBasePath("http://" + restServer + ":8090/v2");
         processingUnitsApi = new ProcessingUnitsApi();
         containersApi = new ContainersApi();
         hostsApi = new HostsApi();
+    }
+
+    @RequestMapping("/")
+    public ModelAndView index() {
+        return new ModelAndView("index.html");
     }
 
     @GetMapping(value = "/services")
@@ -43,7 +66,7 @@ public class DemoController {
     public String scaleService(@RequestParam String serviceName, @RequestParam String upOrDown) throws ApiException {
         if (upOrDown.equalsIgnoreCase("up")) {
             processingUnitsApi.pusIdInstancesPost(serviceName);
-            return "Incremented instance for "+serviceName+ " service";
+            return "Incremented instance for " + serviceName + " service";
         } else if (upOrDown.equalsIgnoreCase("down")) {
             List<ProcessingUnitInstance> instances = processingUnitsApi.pusIdInstancesGet(serviceName);
             if (instances.size() == 0) {
@@ -52,9 +75,9 @@ public class DemoController {
             List<String> sorted = instances.stream().map(ProcessingUnitInstance::getId).sorted().collect(Collectors.toList());
             String instanceIdToRemove = sorted.get(sorted.size() - 1);
             processingUnitsApi.pusIdInstancesInstanceIdDelete(serviceName, instanceIdToRemove);
-            return "Instance " + instanceIdToRemove +" was decremented";
+            return "Instance " + instanceIdToRemove + " was decremented";
         } else {
-            throw new IllegalArgumentException("Unhandled behavior for upOrDown=["+upOrDown+"]");
+            throw new IllegalArgumentException("Unhandled behavior for upOrDown=[" + upOrDown + "]");
         }
     }
 
@@ -83,7 +106,7 @@ public class DemoController {
         System.out.println(removeContainer((containerId)));
 
         try {
-            Thread.sleep(duration * MILLISECONDS_IN_SECOND );
+            Thread.sleep(duration * MILLISECONDS_IN_SECOND);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
