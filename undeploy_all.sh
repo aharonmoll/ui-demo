@@ -19,7 +19,7 @@ fi
 cd ${GS_DIR}/bin
 
 totalPus=$(./gs.sh pu list | grep "Processing Units:" | awk '{ print $3 }')
-deployedPus=$(./gs.sh pu list | head -6 | tail -4 | awk '{ print $1 }')
+deployedPus=$(./gs.sh pu list | head -$((2 + $totalPus)) | tail -${totalPus}) | awk '{ print $1 }')
 
 if [[ ${totalPus} -gt 0 ]]; then
     echo "Undeploying ${totalPus} processing units..."
