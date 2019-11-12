@@ -23,7 +23,7 @@ deployedPus=$(./gs.sh pu list | head -$((2 + $totalPus)) | tail -${totalPus} | a
 
 if [[ ${totalPus} -gt 0 ]]; then
     echo "Undeploying ${totalPus} processing units..."
-    ./gs.sh pu list | head -6 | tail -4 | awk '{ print $1 }' | xargs -t -I {} ./gs.sh pu undeploy {}
+    ./gs.sh pu list | head -$((2 + $totalPus)) | tail -${totalPus} | awk '{ print $1 }' | xargs -t -I {} ./gs.sh pu undeploy {}
 else
     echo "No processing units are deployed"
     exit 1
