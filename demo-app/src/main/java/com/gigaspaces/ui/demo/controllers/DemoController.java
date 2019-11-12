@@ -95,25 +95,20 @@ public class DemoController {
         return "GSC created on " + hostName;
     }
 
-    @PostMapping(value = "/pu")
-    public String terminateAndStartContainer(@RequestParam String puName, @RequestParam String instanceId, @RequestParam String time) throws ApiException {
-        int duration = Integer.parseInt(time);
-        ProcessingUnitInstance puInstance = processingUnitsApi.pusIdInstancesInstanceIdGet(puName, instanceId);
+    @PostMapping(value = "/instance/unavailable")
+    public String markInstanceUnavailable(@RequestParam String serviceName, @RequestParam String instanceId, @RequestParam Integer duration) throws ApiException {
+        ProcessingUnitInstance puInstance = processingUnitsApi.pusIdInstancesInstanceIdGet(serviceName, instanceId);
         String containerId = puInstance.getContainerId();
         String hostName = puInstance.getHostId();
-        System.out.println("GSC id is " + containerId + "host name is " + hostName);
-
-        System.out.println(removeContainer((containerId)));
+        removeContainer(containerId);
 
         try {
             Thread.sleep(duration * MILLISECONDS_IN_SECOND);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
         }
 
-       /* System.out.println(createContainer(hostName));
-        return "";*/
-        return createContainer(hostName);
+        createContainer(hostName);
+        return "Instance ["+instanceId+"] is being started again";
     }
 
     @DeleteMapping(value = "/container")

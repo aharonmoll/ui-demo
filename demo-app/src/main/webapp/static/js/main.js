@@ -12,6 +12,7 @@ function updateInstances(serviceName, elem) {
     var service = allServices.filter(function (service) { return service.name == serviceName; })[0];
     clearSelect(elem, 0);
     service.instances.forEach(function (instance) {
+    //TODO use addOption
         var option = document.createElement("option");
         option.text = instance;
         elem.add(option);
@@ -41,6 +42,48 @@ function updateContainers(hostName, elem) {
 }
 
 /// APIs
+function markUnavailable(elem) {
+    var parent = $(elem).parents(".form-horizontal");
+    var selects = parent.find("select");
+    var duration = parent.find(".duration")[0];
+    var result = parent.find(".result");
+    var selectedService = selects[0].value;
+    if (!selectedService) {
+        alert("Please select a service");
+        return;
+    }
+
+    var selectedInstance = selects[1].value;
+    if (!selectedInstance) {
+        alert("Please select an instance");
+        return;
+    }
+
+    var selectedDuration = duration.value;
+    if (!duration) {
+        alert("Please select a duration");
+        return;
+    }
+
+    if (duration < 10) {
+        alert("Please select a duration higher than 10 seconds");
+        return;
+    }
+
+    result.html("Instance ["+selectedInstance+"] is being marked as Unavailable")
+
+//    elem.disabled = true;
+    $.post( baseUrl + "instance/unavailable?serviceName="+selectedService+"&instanceId="+selectedInstance+"&duration="+selectedDuration)
+     .done(function( data ) {
+        result.html(data);
+//        elem.disabled = false;
+    })
+    .fail(function (xhr, textStatus, errorThrown) {
+        result.html(xhr.responseText);
+//        elem.disabled = false;
+    });
+}
+
 function createContainer(elem) {
     var parent = $(elem).parents(".form-horizontal");
     var selects = parent.find("select");
