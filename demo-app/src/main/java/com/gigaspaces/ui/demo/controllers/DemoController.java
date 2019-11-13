@@ -1,23 +1,30 @@
 package com.gigaspaces.ui.demo.controllers;
 
+import com.gigaspaces.async.AsyncFuture;
 import com.gigaspaces.rest.client.java.api.ContainersApi;
 import com.gigaspaces.rest.client.java.api.HostsApi;
 import com.gigaspaces.rest.client.java.api.ProcessingUnitsApi;
+import com.gigaspaces.rest.client.java.api.SpacesApi;
 import com.gigaspaces.rest.client.java.invoker.ApiException;
 import com.gigaspaces.rest.client.java.invoker.Configuration;
-import com.gigaspaces.rest.client.java.model.CreateContainerRequest;
-import com.gigaspaces.rest.client.java.model.Host;
-import com.gigaspaces.rest.client.java.model.ProcessingUnit;
-import com.gigaspaces.rest.client.java.model.ProcessingUnitInstance;
+import com.gigaspaces.rest.client.java.model.*;
 import com.gigaspaces.start.SystemInfo;
 import com.gigaspaces.start.manager.XapManagerClusterInfo;
 import com.gigaspaces.start.manager.XapManagerConfig;
+import org.openspaces.core.GigaSpace;
+import org.openspaces.core.GigaSpaceConfigurer;
+import org.openspaces.core.context.GigaSpaceContext;
+import org.openspaces.core.space.SpaceProxyConfigurer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import static com.gigaspaces.common.Constants.*;
@@ -29,6 +36,11 @@ public class DemoController {
     private final ProcessingUnitsApi processingUnitsApi;
     private final ContainersApi containersApi;
     private final HostsApi hostsApi;
+    private final SpacesApi spacesApi;
+    private HashMap<String, GigaSpaceConfigurer> spaceConfigurerMap;
+
+    @GigaSpaceContext
+    private GigaSpace gigaSpace;
 
     public DemoController() {
         String restServer;
@@ -49,6 +61,9 @@ public class DemoController {
         processingUnitsApi = new ProcessingUnitsApi();
         containersApi = new ContainersApi();
         hostsApi = new HostsApi();
+        spacesApi = new SpacesApi();
+        spaceConfigurerMap = new HashMap<>();
+        gigaSpace = new GigaSpaceConfigurer(new SpaceProxyConfigurer("space").lookupGroups("efratGroup")).gigaSpace();
     }
 
     @RequestMapping("/")
@@ -95,26 +110,64 @@ public class DemoController {
         return "GSC created on " + hostName;
     }
 
+    @DeleteMapping(value = "/container")
+    public String removeContainer(@RequestParam String containerId) throws ApiException {
+        containersApi.containersIdDelete(containerId);
+        return "GSC " + containerId + " was removed";
+    }
+
     @PostMapping(value = "/instance/unavailable")
     public String markInstanceUnavailable(@RequestParam String serviceName, @RequestParam String instanceId, @RequestParam Integer duration) throws ApiException {
+        ProcessingUnit pu = processingUnitsApi.pusIdGet(serviceName);
         ProcessingUnitInstance puInstance = processingUnitsApi.pusIdInstancesInstanceIdGet(serviceName, instanceId);
+        if (pu.getProcessingUnitType().equals(ProcessingUnit.ProcessingUnitTypeEnum.STATEFUL)) {
+            String spaceName = pu.getSpaces().get(0);
+            Space space = spacesApi.spacesIdGet(spaceName);
+            if (space.getTopology().getBackupsPerPartition() == 0) {
+                return "The Service " + serviceName + "has no backups, instance " + instanceId + " cannot be unavailable";
+            }
+            List<SpaceInstance> spacesInstances = spacesApi.spacesIdInstancesGet(spaceName);
+            Integer partitionNum = puInstance.getPartitionId();
+            List<SpaceInstance> filteredList = spacesInstances.stream().filter(instance -> instance.getPartitionId().equals(partitionNum)).collect(Collectors.toList());
+            if (filteredList.size() < 2) {
+                return "The partition has no backup, " + instanceId + " cannot be unavailable";
+            }
+        }
+
         String containerId = puInstance.getContainerId();
         String hostName = puInstance.getHostId();
         removeContainer(containerId);
-
         try {
             Thread.sleep(duration * MILLISECONDS_IN_SECOND);
-        } catch (InterruptedException ignored) {
-        }
+        } catch (InterruptedException ignored) { }
 
         createContainer(hostName);
         return "Instance ["+instanceId+"] is being started again";
     }
 
-    @DeleteMapping(value = "/container")
-    public String removeContainer(@RequestParam String containerId) throws ApiException {
-        containersApi.containersIdDelete(containerId);
-        return "GSC " + containerId + " was removed";
+
+    @PostMapping(value = "/service/cpualert") //Todo- update path
+    public String triggerCPUAlertOnService(@RequestParam String serviceName, @RequestParam Integer duration) throws ApiException {
+        //TODO extract space name from service
+        AsyncFuture<Integer> future = gigaSpace.execute(new CPUAlertTask(0, duration));
+        try {
+            int result = future.get(duration + 10, TimeUnit.SECONDS); //Todo- change time
+        } catch (Exception e) {
+            return "Failed with error: " + e.getMessage();
+        }
+        return "CPU alert finished";
+    }
+
+
+    @PostMapping(value = "/service/memoryalert") //Todo- update path
+    public String triggerMemoryAlertOnService(@RequestParam String serviceName, @RequestParam Integer duration) throws ApiException {
+        AsyncFuture<Integer> future = gigaSpace.execute(new MemoryAlertTask(0, duration));
+        try {
+            int result = future.get(duration + 10, TimeUnit.SECONDS); //Todo- change time
+        } catch (Exception e) {
+            return "Failed with error: " + e.getMessage();
+        }
+        return "Memory alert finished";
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

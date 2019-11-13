@@ -42,6 +42,78 @@ function updateContainers(hostName, elem) {
 }
 
 /// APIs
+function triggerCPUAlertOnSpace(elem) {
+    var parent = $(elem).parents(".form-horizontal");
+    var selects = parent.find("select");
+    var duration = parent.find(".duration")[0];
+    var result = parent.find(".result");
+    var selectedService = selects[0].value;
+    if (!selectedService) {
+        alert("Please select a service");
+        return;
+    }
+
+    var selectedDuration = duration.value;
+    if (!duration) {
+        alert("Please select a duration");
+        return;
+    }
+
+    if (duration < 10) {
+        alert("Please select a duration higher than 10 seconds");
+        return;
+    }
+
+    result.html("Triggering CPU Alert on ["+selectedService+"]")
+
+    elem.disabled = true;
+    $.post( baseUrl + "service/cpualert?serviceName="+selectedService+"&duration="+selectedDuration)
+     .done(function( data ) {
+        result.html(data);
+        elem.disabled = false;
+    })
+    .fail(function (xhr, textStatus, errorThrown) {
+        result.html(xhr.responseText);
+        elem.disabled = false;
+    });
+}
+
+function triggerMemoryAlertOnService(elem) {
+    var parent = $(elem).parents(".form-horizontal");
+    var selects = parent.find("select");
+    var duration = parent.find(".duration")[0];
+    var result = parent.find(".result");
+    var selectedService = selects[0].value;
+    if (!selectedService) {
+        alert("Please select a service");
+        return;
+    }
+
+    var selectedDuration = duration.value;
+    if (!duration) {
+        alert("Please select a duration");
+        return;
+    }
+
+    if (duration < 10) {
+        alert("Please select a duration higher than 10 seconds");
+        return;
+    }
+
+    result.html("Triggering Memory Alert on ["+selectedService+"]")
+
+    elem.disabled = true;
+    $.post( baseUrl + "service/memoryalert?serviceName="+selectedService+"&duration="+selectedDuration)
+     .done(function( data ) {
+        result.html(data);
+        elem.disabled = false;
+    })
+    .fail(function (xhr, textStatus, errorThrown) {
+        result.html(xhr.responseText);
+        elem.disabled = false;
+    });
+}
+
 function markUnavailable(elem) {
     var parent = $(elem).parents(".form-horizontal");
     var selects = parent.find("select");

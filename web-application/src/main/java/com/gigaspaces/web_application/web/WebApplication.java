@@ -28,8 +28,8 @@ public class WebApplication implements InitializingBean, DisposableBean {
     }
 
     public WebApplication(String spaceName, String groupName) {
-        this.gigaSpace = new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName).lookupLocators("192.168.35.164")).gigaSpace();
-        //this.gigaSpace = new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName).lookupGroups(groupName)).gigaSpace();
+       // this.gigaSpace = new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName).lookupLocators("192.168.35.164")).gigaSpace();
+        this.gigaSpace = new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName).lookupGroups(groupName)).gigaSpace();
     }
 
 

@@ -8,7 +8,7 @@ import org.openspaces.core.executor.TaskRoutingProvider;
 
 import static com.gigaspaces.common.Constants.*;
 
-@SupportCodeChange(id="1")
+@SupportCodeChange(id="2")
 public class CPUAlertTask implements Task<Integer>, TaskRoutingProvider {
     private int value;
     private int duration;
@@ -23,17 +23,12 @@ public class CPUAlertTask implements Task<Integer>, TaskRoutingProvider {
     }
 
     public Integer execute() {
-        System.out.println("CPU: execute version1");
+        System.out.println("CPU: execute version2");
         long startTime = System.currentTimeMillis();
-        long currentTime = 0;
-        boolean toStop = false;
-
         long longMax = 1000;
         long primeCount = 0;
         long primeMax = 0;
 
-
-        //long jobCount = 0;
 
         while ((System.currentTimeMillis() - startTime) / MILLISECONDS_IN_SECOND < duration ) {
             long count = 0;
@@ -48,10 +43,6 @@ public class CPUAlertTask implements Task<Integer>, TaskRoutingProvider {
                     max = i;
                 }
             }
-            primeCount = count;
-            primeMax = max;
-            //jobCount++;
-
         }
         int timeOut = (int)(System.currentTimeMillis() - startTime) / MILLISECONDS_IN_SECOND;
         System.out.println("took " + timeOut);
