@@ -37,7 +37,7 @@ public class DemoController {
     private final ContainersApi containersApi;
     private final HostsApi hostsApi;
     private final SpacesApi spacesApi;
-    private HashMap<String, GigaSpaceConfigurer> spaceConfigurerMap;
+    private HashMap<String, GigaSpace> spacesProxyMap;
 
     @GigaSpaceContext
     private GigaSpace gigaSpace;
@@ -62,8 +62,7 @@ public class DemoController {
         containersApi = new ContainersApi();
         hostsApi = new HostsApi();
         spacesApi = new SpacesApi();
-        spaceConfigurerMap = new HashMap<>();
-        gigaSpace = new GigaSpaceConfigurer(new SpaceProxyConfigurer("space").lookupGroups("efratGroup")).gigaSpace();
+        spacesProxyMap = new HashMap<>();
     }
 
     @RequestMapping("/")
@@ -119,7 +118,14 @@ public class DemoController {
     @PostMapping(value = "/instance/unavailable")
     public String markInstanceUnavailable(@RequestParam String serviceName, @RequestParam String instanceId, @RequestParam Integer duration) throws ApiException {
         ProcessingUnit pu = processingUnitsApi.pusIdGet(serviceName);
-        ProcessingUnitInstance puInstance = processingUnitsApi.pusIdInstancesInstanceIdGet(serviceName, instanceId);
+        ProcessingUnitInstance puInstance;
+        try {
+            puInstance = processingUnitsApi.pusIdInstancesInstanceIdGet(serviceName, instanceId);
+        }
+        catch (Exception e) {
+            return "Failed with error: " + e.getMessage();
+        }
+
         if (pu.getProcessingUnitType().equals(ProcessingUnit.ProcessingUnitTypeEnum.STATEFUL)) {
             String spaceName = pu.getSpaces().get(0);
             Space space = spacesApi.spacesIdGet(spaceName);
@@ -146,12 +152,21 @@ public class DemoController {
     }
 
 
-    @PostMapping(value = "/service/cpualert") //Todo- update path
+    @PostMapping(value = "/service/cpualert")
     public String triggerCPUAlertOnService(@RequestParam String serviceName, @RequestParam Integer duration) throws ApiException {
-        //TODO extract space name from service
-        AsyncFuture<Integer> future = gigaSpace.execute(new CPUAlertTask(0, duration));
+        String spaceName;
         try {
-            int result = future.get(duration + 10, TimeUnit.SECONDS); //Todo- change time
+            spaceName = processingUnitsApi.pusIdGet(serviceName).getSpaces().get(0);
+        } catch (Exception e) {
+            return "Failed with error: " + e.getMessage();
+        }
+        if (!spacesProxyMap.containsKey(spaceName)){
+            spacesProxyMap.put(spaceName, new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName)).gigaSpace());
+        }
+
+        AsyncFuture<Integer> future = spacesProxyMap.get(spaceName).execute(new CPUAlertTask(0, duration));
+        try {
+            int result = future.get(duration + 10, TimeUnit.SECONDS);  //Todo - change timeout?
         } catch (Exception e) {
             return "Failed with error: " + e.getMessage();
         }
@@ -159,11 +174,21 @@ public class DemoController {
     }
 
 
-    @PostMapping(value = "/service/memoryalert") //Todo- update path
+    @PostMapping(value = "/service/memoryalert")
     public String triggerMemoryAlertOnService(@RequestParam String serviceName, @RequestParam Integer duration) throws ApiException {
-        AsyncFuture<Integer> future = gigaSpace.execute(new MemoryAlertTask(0, duration));
+        String spaceName;
         try {
-            int result = future.get(duration + 10, TimeUnit.SECONDS); //Todo- change time
+            spaceName = processingUnitsApi.pusIdGet(serviceName).getSpaces().get(0);
+        } catch (Exception e) {
+            return "Failed with error: " + e.getMessage();
+        }
+        if (!spacesProxyMap.containsKey(spaceName)){
+            spacesProxyMap.put(spaceName, new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName)).gigaSpace());
+        }
+
+        AsyncFuture<Integer> future = spacesProxyMap.get(spaceName).execute(new MemoryAlertTask(0, duration));
+        try {
+            int result = future.get(duration + 150, TimeUnit.SECONDS); //Todo - change timeout? or delete it?
         } catch (Exception e) {
             return "Failed with error: " + e.getMessage();
         }

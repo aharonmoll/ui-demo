@@ -23,7 +23,7 @@ public class CPUAlertTask implements Task<Integer>, TaskRoutingProvider {
     }
 
     public Integer execute() {
-        System.out.println("CPU: execute version2");
+        System.out.println("CPU: execute alert");
         long startTime = System.currentTimeMillis();
         long longMax = 1000;
         long primeCount = 0;
@@ -45,7 +45,6 @@ public class CPUAlertTask implements Task<Integer>, TaskRoutingProvider {
             }
         }
         int timeOut = (int)(System.currentTimeMillis() - startTime) / MILLISECONDS_IN_SECOND;
-        System.out.println("took " + timeOut);
 
         return timeOut;
     }
