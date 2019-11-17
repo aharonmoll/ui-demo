@@ -11,6 +11,9 @@ import com.gigaspaces.rest.client.java.model.*;
 import com.gigaspaces.start.SystemInfo;
 import com.gigaspaces.start.manager.XapManagerClusterInfo;
 import com.gigaspaces.start.manager.XapManagerConfig;
+import org.openspaces.admin.Admin;
+import org.openspaces.admin.AdminFactory;
+import org.openspaces.admin.vm.VirtualMachine;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.context.GigaSpaceContext;
@@ -38,6 +41,7 @@ public class DemoController {
     private final HostsApi hostsApi;
     private final SpacesApi spacesApi;
     private HashMap<String, GigaSpace> spacesProxyMap;
+    private Admin admin;
 
     @GigaSpaceContext
     private GigaSpace gigaSpace;
@@ -63,6 +67,7 @@ public class DemoController {
         hostsApi = new HostsApi();
         spacesApi = new SpacesApi();
         spacesProxyMap = new HashMap<>();
+        admin = new AdminFactory().addGroup("efratGroup").createAdmin();
     }
 
     @RequestMapping("/")
@@ -161,6 +166,7 @@ public class DemoController {
             return "Failed with error: " + e.getMessage();
         }
         if (!spacesProxyMap.containsKey(spaceName)){
+            //spacesProxyMap.put(spaceName, new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName).lookupGroups("efratGroup")).gigaSpace());
             spacesProxyMap.put(spaceName, new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName)).gigaSpace());
         }
 
@@ -177,18 +183,37 @@ public class DemoController {
     @PostMapping(value = "/service/memoryalert")
     public String triggerMemoryAlertOnService(@RequestParam String serviceName, @RequestParam Integer duration) throws ApiException {
         String spaceName;
+        ProcessingUnit pu;
         try {
-            spaceName = processingUnitsApi.pusIdGet(serviceName).getSpaces().get(0);
+            pu = processingUnitsApi.pusIdGet(serviceName);
+            spaceName = pu.getSpaces().get(0);
+
         } catch (Exception e) {
             return "Failed with error: " + e.getMessage();
         }
         if (!spacesProxyMap.containsKey(spaceName)){
+            //spacesProxyMap.put(spaceName, new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName).lookupGroups("efratGroup")).gigaSpace());
             spacesProxyMap.put(spaceName, new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName)).gigaSpace());
         }
 
         AsyncFuture<Integer> future = spacesProxyMap.get(spaceName).execute(new MemoryAlertTask(0, duration));
         try {
             int result = future.get(duration + 150, TimeUnit.SECONDS); //Todo - change timeout? or delete it?
+            List<SpaceInstance> spacesInstances = spacesApi.spacesIdInstancesGet(spaceName);
+            List<SpaceInstance> filteredList = spacesInstances.stream().filter(instance -> instance.getPartitionId().equals(0) &&
+                    instance.getMode().equals("BACKUP")).collect(Collectors.toList());
+            if (filteredList.size() > 0){
+                String uid;
+                long containerPid = containersApi.containersIdDetailsJvmGet(filteredList.get(0).getContainerId()).getPid();
+                for (VirtualMachine vm :admin.getVirtualMachines()){
+                    if (vm.getDetails().getPid() == containerPid) {
+                        uid = vm.getUid();
+                        admin.getVirtualMachines().getVirtualMachineByUID(uid).runGc();
+                        break;
+                    }
+                }
+               //admin.getVirtualMachines().getVirtualMachineByUID(filteredList.get(0).getContainerId()).runGc();
+            }
         } catch (Exception e) {
             return "Failed with error: " + e.getMessage();
         }

@@ -9,8 +9,8 @@ import org.openspaces.core.executor.TaskRoutingProvider;
 
 import static com.gigaspaces.common.Constants.*;
 
-@SupportCodeChange(id = "1")
-public class MemoryAlertTask implements Task<Integer>, TaskRoutingProvider {
+@SupportCodeChange(id = "10")
+public class MemoryAlertTask implements Task<Integer>, TaskRoutingProvider, Runnable {
     private int value;
     private int duration;
 
@@ -24,15 +24,27 @@ public class MemoryAlertTask implements Task<Integer>, TaskRoutingProvider {
     }
 
     public Integer execute() {
+      new Thread (this::run).start();
+      run();
+        return 0;
+
+    }
+
+    public Integer getRouting() {
+        return this.value;
+    }
+
+    @Override
+    public void run() {
         long startTime = System.currentTimeMillis();
         long currentTime = 0;
         boolean toStop = false;
-        System.out.println("Start writing Bundles to space");
+        System.out.println("Start writing Bundles to space10");
 
         while (((currentTime - startTime) / MILLISECONDS_IN_SECOND < duration * MILLISECONDS_IN_SECOND) && !toStop) {
             long iterationStartTime = System.currentTimeMillis();
             Bundle[] bundles = new Bundle[NUM_OF_BUNDLES_TO_WRITE];
-            for (int i = 0; i < NUM_OF_BUNDLES_TO_WRITE; i++) {
+            for (int i = 0; i < NUM_OF_BUNDLES_TO_WRITE ; i++) {
                 bundles[i] = Bundle.createBundle();
             }
             gigaSpace.writeMultiple(bundles);
@@ -56,12 +68,6 @@ public class MemoryAlertTask implements Task<Integer>, TaskRoutingProvider {
         System.out.println("After clear: there are " + count2 + " Bundles");
         System.gc();
         System.out.println("Cleanup completed...");
-
-        return count;
-    }
-
-    public Integer getRouting() {
-        return this.value;
     }
 }
 

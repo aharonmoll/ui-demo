@@ -5,10 +5,12 @@ import org.openspaces.core.GigaSpace;
 import org.openspaces.core.executor.Task;
 import org.openspaces.core.executor.TaskGigaSpace;
 import org.openspaces.core.executor.TaskRoutingProvider;
+import static java.lang.Math.atan;
+import static java.lang.StrictMath.tan;
 
 import static com.gigaspaces.common.Constants.*;
 
-@SupportCodeChange(id="2")
+@SupportCodeChange(id="1")
 public class CPUAlertTask implements Task<Integer>, TaskRoutingProvider {
     private int value;
     private int duration;
@@ -31,7 +33,7 @@ public class CPUAlertTask implements Task<Integer>, TaskRoutingProvider {
 
 
         while ((System.currentTimeMillis() - startTime) / MILLISECONDS_IN_SECOND < duration ) {
-            long count = 0;
+            /*long count = 0;
             long max = 0;
             for (long i=3; i<=longMax; i++) {
                 boolean isPrime = true;
@@ -42,6 +44,14 @@ public class CPUAlertTask implements Task<Integer>, TaskRoutingProvider {
                     count++;
                     max = i;
                 }
+            }*/
+            for (int i = 0; i < 100_000; i++) {
+                double d = tan(atan(tan(atan(tan(atan(tan(atan(tan(atan(123456789.123456789))))))))));
+            }
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         int timeOut = (int)(System.currentTimeMillis() - startTime) / MILLISECONDS_IN_SECOND;
