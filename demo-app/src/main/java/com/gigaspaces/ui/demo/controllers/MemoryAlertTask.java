@@ -24,9 +24,6 @@ public class MemoryAlertTask implements Task<Integer>, TaskRoutingProvider, Runn
     }
 
     public Integer execute() {
-      new Thread (this::run).start();
-      new Thread (this::run).start();
-      new Thread (this::run).start();
       run();
       return 0;
 
@@ -60,11 +57,11 @@ public class MemoryAlertTask implements Task<Integer>, TaskRoutingProvider, Runn
 
         int count = gigaSpace.count(new Bundle());
         System.out.println("Finish writing " + count + " Bundles");
-        /*try {
-            Thread.sleep(1000);
+        try {
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }*/
+        }
         gigaSpace.clear(new Bundle());
 
         int count2 = gigaSpace.count(new Bundle());

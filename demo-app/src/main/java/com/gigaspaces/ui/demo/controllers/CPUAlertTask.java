@@ -27,24 +27,8 @@ public class CPUAlertTask implements Task<Integer>, TaskRoutingProvider {
     public Integer execute() {
         System.out.println("CPU: execute alert");
         long startTime = System.currentTimeMillis();
-        long longMax = 1000;
-        long primeCount = 0;
-        long primeMax = 0;
-
 
         while ((System.currentTimeMillis() - startTime) / MILLISECONDS_IN_SECOND < duration ) {
-            /*long count = 0;
-            long max = 0;
-            for (long i=3; i<=longMax; i++) {
-                boolean isPrime = true;
-                for (long j=2; j<=i/2 && isPrime; j++) {
-                    isPrime = i % j > 0;
-                }
-                if (isPrime) {
-                    count++;
-                    max = i;
-                }
-            }*/
             for (int i = 0; i < 100_000; i++) {
                 double d = tan(atan(tan(atan(tan(atan(tan(atan(tan(atan(123456789.123456789))))))))));
             }

@@ -5,7 +5,6 @@ import com.gigaspaces.annotation.pojo.SpaceId;
 public class Product {
     private Integer id;
     private String name;
-    //private Integer quantity;
 
     public Product() {
     }

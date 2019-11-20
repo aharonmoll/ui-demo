@@ -41,9 +41,6 @@ public class DemoController {
     private HashMap<String, GigaSpace> spacesProxyMap;
     private Admin admin;
 
-    @GigaSpaceContext
-    private GigaSpace gigaSpace;
-
     public DemoController() {
         String restServer;
         XapManagerClusterInfo managerClusterInfo = SystemInfo.singleton().getManagerClusterInfo();
@@ -167,9 +164,9 @@ public class DemoController {
             spacesProxyMap.put(spaceName, new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName)).gigaSpace());
         }
 
-        AsyncFuture<Integer> future = spacesProxyMap.get(spaceName).execute(new CPUAlertTask(0, duration));
+        AsyncFuture<Integer> future = spacesProxyMap.get(spaceName).execute(new CPUAlertTask(SPACE_PARTITION, duration));
         try {
-            int result = future.get(duration + 10, TimeUnit.SECONDS);  //Todo - change timeout?
+            int result = future.get(duration + 10, TimeUnit.SECONDS);
         } catch (Exception e) {
             return "Failed with error: " + e.getMessage();
         }
@@ -192,14 +189,14 @@ public class DemoController {
             spacesProxyMap.put(spaceName, new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName)).gigaSpace());
         }
 
-        AsyncFuture<Integer> future = spacesProxyMap.get(spaceName).execute(new MemoryAlertTask(0, duration));
+        AsyncFuture<Integer> future = spacesProxyMap.get(spaceName).execute(new MemoryAlertTask(SPACE_PARTITION, duration));
         try {
-            int result = future.get(duration + 150, TimeUnit.SECONDS); //Todo - change timeout? or delete it?
-            //todo -validate if there is backup
-            ProcessingUnitPartition partionedPuInstances = admin.getProcessingUnits().getProcessingUnit(serviceName).getPartition(0);/*.getPrimary().getGridServiceContainer().getVirtualMachine().runGc()*/;
+            int result = future.get(duration + 150, TimeUnit.SECONDS);
+            ProcessingUnitPartition partionedPuInstances = admin.getProcessingUnits().getProcessingUnit(serviceName).getPartition(SPACE_PARTITION);/*.getPrimary().getGridServiceContainer().getVirtualMachine().runGc()*/;
             partionedPuInstances.getPrimary().getGridServiceContainer().getVirtualMachine().runGc();
-            partionedPuInstances.getBackup().getGridServiceContainer().getVirtualMachine().runGc();
-
+            if (partionedPuInstances.getBackup() != null) {
+                partionedPuInstances.getBackup().getGridServiceContainer().getVirtualMachine().runGc();
+            }
         } catch (Exception e) {
             return "Failed with error: " + e.getMessage();
         }

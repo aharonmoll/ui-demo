@@ -54,12 +54,12 @@ function triggerCPUAlertOnSpace(elem) {
     }
 
     var selectedDuration = duration.value;
-    if (!duration) {
+    if (!selectedDuration) {
         alert("Please select a duration");
         return;
     }
 
-    if (duration < 10) {
+    if (selectedDuration < 10) {
         alert("Please select a duration higher than 10 seconds");
         return;
     }
@@ -90,12 +90,12 @@ function triggerMemoryAlertOnService(elem) {
     }
 
     var selectedDuration = duration.value;
-    if (!duration) {
+    if (!selectedDuration) {
         alert("Please select a duration");
         return;
     }
 
-    if (duration < 10) {
+    if (selectedDuration < 90) {
         alert("Please select a duration higher than 10 seconds");
         return;
     }
@@ -132,12 +132,12 @@ function markUnavailable(elem) {
     }
 
     var selectedDuration = duration.value;
-    if (!duration) {
+    if (!selectedDuration) {
         alert("Please select a duration");
         return;
     }
 
-    if (duration < 10) {
+    if (selectedDuration < 10) {
         alert("Please select a duration higher than 10 seconds");
         return;
     }

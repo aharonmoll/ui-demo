@@ -19,7 +19,7 @@ public class Bundle {
         return template;
     }
 
-    @SpaceId(autoGenerate = true)  //Todo- when it gets the id? not in setID
+    @SpaceId(autoGenerate = true)
     public String getId() {
         return id;
     }
