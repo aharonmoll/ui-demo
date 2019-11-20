@@ -13,7 +13,7 @@ import com.gigaspaces.start.manager.XapManagerClusterInfo;
 import com.gigaspaces.start.manager.XapManagerConfig;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
-import org.openspaces.admin.vm.VirtualMachine;
+import org.openspaces.admin.pu.ProcessingUnitPartition;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.context.GigaSpaceContext;
@@ -25,9 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import static com.gigaspaces.common.Constants.*;
@@ -67,7 +65,7 @@ public class DemoController {
         hostsApi = new HostsApi();
         spacesApi = new SpacesApi();
         spacesProxyMap = new HashMap<>();
-        admin = new AdminFactory().addGroup("efratGroup").createAdmin();
+        admin = new AdminFactory().createAdmin();
     }
 
     @RequestMapping("/")
@@ -166,7 +164,6 @@ public class DemoController {
             return "Failed with error: " + e.getMessage();
         }
         if (!spacesProxyMap.containsKey(spaceName)){
-            //spacesProxyMap.put(spaceName, new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName).lookupGroups("efratGroup")).gigaSpace());
             spacesProxyMap.put(spaceName, new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName)).gigaSpace());
         }
 
@@ -192,28 +189,17 @@ public class DemoController {
             return "Failed with error: " + e.getMessage();
         }
         if (!spacesProxyMap.containsKey(spaceName)){
-            //spacesProxyMap.put(spaceName, new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName).lookupGroups("efratGroup")).gigaSpace());
             spacesProxyMap.put(spaceName, new GigaSpaceConfigurer(new SpaceProxyConfigurer(spaceName)).gigaSpace());
         }
 
         AsyncFuture<Integer> future = spacesProxyMap.get(spaceName).execute(new MemoryAlertTask(0, duration));
         try {
             int result = future.get(duration + 150, TimeUnit.SECONDS); //Todo - change timeout? or delete it?
-            List<SpaceInstance> spacesInstances = spacesApi.spacesIdInstancesGet(spaceName);
-            List<SpaceInstance> filteredList = spacesInstances.stream().filter(instance -> instance.getPartitionId().equals(0) &&
-                    instance.getMode().equals("BACKUP")).collect(Collectors.toList());
-            if (filteredList.size() > 0){
-                String uid;
-                long containerPid = containersApi.containersIdDetailsJvmGet(filteredList.get(0).getContainerId()).getPid();
-                for (VirtualMachine vm :admin.getVirtualMachines()){
-                    if (vm.getDetails().getPid() == containerPid) {
-                        uid = vm.getUid();
-                        admin.getVirtualMachines().getVirtualMachineByUID(uid).runGc();
-                        break;
-                    }
-                }
-               //admin.getVirtualMachines().getVirtualMachineByUID(filteredList.get(0).getContainerId()).runGc();
-            }
+            //todo -validate if there is backup
+            ProcessingUnitPartition partionedPuInstances = admin.getProcessingUnits().getProcessingUnit(serviceName).getPartition(0);/*.getPrimary().getGridServiceContainer().getVirtualMachine().runGc()*/;
+            partionedPuInstances.getPrimary().getGridServiceContainer().getVirtualMachine().runGc();
+            partionedPuInstances.getBackup().getGridServiceContainer().getVirtualMachine().runGc();
+
         } catch (Exception e) {
             return "Failed with error: " + e.getMessage();
         }
