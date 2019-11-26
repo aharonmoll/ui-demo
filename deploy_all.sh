@@ -24,5 +24,5 @@ ${GS_DIR}/bin/gs.sh pu deploy ProductsLoader ${DIRNAME}/products-loader/target/p
 
 ${GS_DIR}/bin/gs.sh pu deploy --instances=2 WebApplication ${DIRNAME}/web-application/target/web-application.war
 
-${GS_DIR}/bin/gs.sh pu deploy --instances=1 DemoApp ${DIRNAME}/demo-app/target/demo-app.war
+{GS_DIR}/bin/gs.sh pu deploy --instances=1 DemoApp ${DIRNAME}/demo-app/target/demo-app.war
 

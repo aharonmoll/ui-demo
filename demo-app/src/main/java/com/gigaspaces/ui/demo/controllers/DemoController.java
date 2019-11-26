@@ -16,7 +16,6 @@ import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.ProcessingUnitPartition;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
-import org.openspaces.core.context.GigaSpaceContext;
 import org.openspaces.core.space.SpaceProxyConfigurer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -192,13 +191,15 @@ public class DemoController {
         AsyncFuture<Integer> future = spacesProxyMap.get(spaceName).execute(new MemoryAlertTask(SPACE_PARTITION, duration));
         try {
             int result = future.get(duration + 150, TimeUnit.SECONDS);
-            ProcessingUnitPartition partionedPuInstances = admin.getProcessingUnits().getProcessingUnit(serviceName).getPartition(SPACE_PARTITION);/*.getPrimary().getGridServiceContainer().getVirtualMachine().runGc()*/;
-            partionedPuInstances.getPrimary().getGridServiceContainer().getVirtualMachine().runGc();
-            if (partionedPuInstances.getBackup() != null) {
-                partionedPuInstances.getBackup().getGridServiceContainer().getVirtualMachine().runGc();
-            }
         } catch (Exception e) {
             return "Failed with error: " + e.getMessage();
+        }
+        finally {
+            ProcessingUnitPartition partitionedPuInstances = admin.getProcessingUnits().getProcessingUnit(serviceName).getPartition(SPACE_PARTITION);
+            partitionedPuInstances.getPrimary().getGridServiceContainer().getVirtualMachine().runGc();
+            if (partitionedPuInstances.getBackup() != null) {
+                partitionedPuInstances.getBackup().getGridServiceContainer().getVirtualMachine().runGc();
+            }
         }
         return "Memory alert finished";
     }
