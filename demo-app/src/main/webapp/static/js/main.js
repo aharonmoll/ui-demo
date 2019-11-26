@@ -59,8 +59,8 @@ function triggerCPUAlertOnSpace(elem) {
         return;
     }
 
-    if (selectedDuration < 10) {
-        alert("Please select a duration higher than 10 seconds");
+    if (selectedDuration < 30) {
+        alert("Please select a duration higher than 30 seconds");
         return;
     }
 
@@ -96,7 +96,7 @@ function triggerMemoryAlertOnService(elem) {
     }
 
     if (selectedDuration < 90) {
-        alert("Please select a duration higher than 10 seconds");
+        alert("Please select a duration higher than 90 seconds");
         return;
     }
 
@@ -137,7 +137,7 @@ function markUnavailable(elem) {
         return;
     }
 
-    if (selectedDuration < 10) {
+    if (selectedDuration < 30) {
         alert("Please select a duration higher than 10 seconds");
         return;
     }
