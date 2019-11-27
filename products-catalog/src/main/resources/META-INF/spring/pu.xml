@@ -75,10 +75,6 @@
                 <!--<prop key="cluster-config.cache-loader.central-data-source">true</prop>-->
                 <prop key="space-config.leader-election.zookeeper.connection-timeout">30000</prop>
                 <prop key="space-config.leader-election.zookeeper.session-timeout">45000</prop>
-                <prop key="space-config.engine.memory_usage.high_watermark_percentage">97</prop>
-                <prop key="space-config.engine.memory_usage.write_only_block_percentage">96</prop>
-                <prop key="space-config.engine.memory_usage.write_only_check_percentage">95</prop>
-                <prop key="space-config.engine.memory_usage.low_watermark_percentage">94</prop>
             </props>
         </os-core:properties>
     </os-core:space>

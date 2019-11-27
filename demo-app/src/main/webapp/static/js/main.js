@@ -95,8 +95,8 @@ function triggerMemoryAlertOnService(elem) {
         return;
     }
 
-    if (selectedDuration < 90) {
-        alert("Please select a duration higher than 90 seconds");
+    if (selectedDuration < 60) {
+        alert("Please select a duration higher than 60 seconds");
         return;
     }
 

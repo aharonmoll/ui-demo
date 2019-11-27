@@ -24,7 +24,7 @@ public class AppMain {
         }*/
 
         try {
-            System.out.println(controller.triggerMemoryAlertOnService("ProductsCatalog", 120));
+            System.out.println(controller.triggerMemoryAlertOnService("ProductsCatalog", 60));
         } catch (ApiException e) {
             e.printStackTrace();
         }
