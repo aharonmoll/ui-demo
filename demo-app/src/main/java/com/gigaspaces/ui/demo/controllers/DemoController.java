@@ -32,7 +32,6 @@ import static com.gigaspaces.common.Constants.*;
 @RestController
 public class DemoController {
 
-
     private final ProcessingUnitsApi processingUnitsApi;
     private final ContainersApi containersApi;
     private final HostsApi hostsApi;
@@ -103,6 +102,7 @@ public class DemoController {
     public String createContainer(@RequestParam String hostName) throws ApiException {
         CreateContainerRequest request = new CreateContainerRequest();
         request.setHost(hostName);
+        request.setMemory("512m");
         request.addVmArgumentsItem("-Dcom.gigaspaces.grid.gsc.serviceLimit=1");
         containersApi.containersPost(request);
         return "GSC created on " + hostName;
