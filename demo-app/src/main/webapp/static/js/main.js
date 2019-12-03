@@ -138,7 +138,7 @@ function markUnavailable(elem) {
     }
 
     if (selectedDuration < 30) {
-        alert("Please select a duration higher than 10 seconds");
+        alert("Please select a duration higher than 30 seconds");
         return;
     }
 
