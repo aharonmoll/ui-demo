@@ -22,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +32,7 @@ import java.util.stream.Collectors;
 import static com.gigaspaces.common.Constants.*;
 
 @RestController
-public class DemoController {
+public class DemoController implements Closeable {
 
     private final ProcessingUnitsApi processingUnitsApi;
     private final ContainersApi containersApi;
@@ -103,7 +105,6 @@ public class DemoController {
         CreateContainerRequest request = new CreateContainerRequest();
         request.setHost(hostName);
         request.setMemory("512m");
-        request.addVmArgumentsItem("-Dcom.gigaspaces.grid.gsc.serviceLimit=1");
         containersApi.containersPost(request);
         return "GSC created on " + hostName;
     }
@@ -152,7 +153,7 @@ public class DemoController {
 
 
     @PostMapping(value = "/service/cpualert")
-    public String triggerCPUAlertOnService(@RequestParam String serviceName, @RequestParam Integer duration) throws ApiException {
+    public String triggerCPUAlertOnService(@RequestParam String serviceName, @RequestParam Integer duration) {
         String spaceName;
         try {
             spaceName = processingUnitsApi.pusIdGet(serviceName).getSpaces().get(0);
@@ -165,7 +166,7 @@ public class DemoController {
 
         AsyncFuture<Integer> future = spacesProxyMap.get(spaceName).execute(new CPUAlertTask(SPACE_PARTITION, duration));
         try {
-            int result = future.get(duration + 10, TimeUnit.SECONDS);
+            future.get(duration + 10, TimeUnit.SECONDS);
         } catch (Exception e) {
             return "Failed with error: " + e.getMessage();
         }
@@ -174,7 +175,7 @@ public class DemoController {
 
 
     @PostMapping(value = "/service/memoryalert")
-    public String triggerMemoryAlertOnService(@RequestParam String serviceName, @RequestParam Integer duration) throws ApiException {
+    public String triggerMemoryAlertOnService(@RequestParam String serviceName, @RequestParam Integer duration) {
         String spaceName;
         ProcessingUnit pu;
         try {
@@ -190,7 +191,7 @@ public class DemoController {
 
         AsyncFuture<Integer> future = spacesProxyMap.get(spaceName).execute(new MemoryAlertTask(SPACE_PARTITION, duration));
         try {
-            int result = future.get(duration + 150, TimeUnit.SECONDS);
+            future.get(duration + 150, TimeUnit.SECONDS);
         } catch (Exception e) {
             return "Failed with error: " + e.getMessage();
         }
@@ -209,4 +210,8 @@ public class DemoController {
         return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @Override
+    public void close() throws IOException {
+
+    }
 }

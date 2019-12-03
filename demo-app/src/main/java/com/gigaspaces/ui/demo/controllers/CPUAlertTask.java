@@ -12,23 +12,23 @@ import static com.gigaspaces.common.Constants.*;
 
 @SupportCodeChange(id="1")
 public class CPUAlertTask implements Task<Integer>, TaskRoutingProvider {
-    private int value;
-    private int duration;
+    private int routing;
+    private int durationInSeconds;
 
     @TaskGigaSpace
     private transient GigaSpace gigaSpace;
 
 
-    public CPUAlertTask(int value, int duration) {
-        this.value = value;
-        this.duration = duration;
+    public CPUAlertTask(int routing, int durationInSeconds) {
+        this.routing = routing;
+        this.durationInSeconds = durationInSeconds;
     }
 
     public Integer execute() {
         System.out.println("CPU: execute alert");
         long startTime = System.currentTimeMillis();
 
-        while ((System.currentTimeMillis() - startTime) / MILLISECONDS_IN_SECOND < duration ) {
+        while ((System.currentTimeMillis() - startTime)  < durationInSeconds * MILLISECONDS_IN_SECOND) {
             for (int i = 0; i < 100_000; i++) {
                 double d = tan(atan(tan(atan(tan(atan(tan(atan(tan(atan(123456789.123456789))))))))));
             }
@@ -38,12 +38,11 @@ public class CPUAlertTask implements Task<Integer>, TaskRoutingProvider {
                 e.printStackTrace();
             }
         }
-        int timeOut = (int)(System.currentTimeMillis() - startTime) / MILLISECONDS_IN_SECOND;
 
-        return timeOut;
+        return 0;
     }
 
     public Integer getRouting() {
-        return this.value;
+        return this.routing;
     }
 }

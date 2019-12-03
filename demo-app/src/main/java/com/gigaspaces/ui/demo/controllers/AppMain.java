@@ -3,6 +3,8 @@ package com.gigaspaces.ui.demo.controllers;
 
 import com.gigaspaces.rest.client.java.invoker.ApiException;
 
+import java.io.IOException;
+
 public class AppMain {
     public static void main (String args[]) {
         DemoController controller = new DemoController();
@@ -23,9 +25,12 @@ public class AppMain {
             e.printStackTrace();
         }*/
 
+
+        System.out.println(controller.triggerMemoryAlertOnService("ProductsCatalog", 10));
+
         try {
-            System.out.println(controller.triggerMemoryAlertOnService("ProductsCatalog", 10));
-        } catch (ApiException e) {
+            controller.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

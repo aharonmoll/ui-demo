@@ -16,14 +16,14 @@ import static com.gigaspaces.common.Constants.*;
 
 @SupportCodeChange(id = "1")
 public class MemoryAlertTask implements Task<Integer>, TaskRoutingProvider {
-    private int value;
+    private int routing;
     private int duration;
 
     @TaskGigaSpace
     private transient GigaSpace gigaSpace;
 
-    public MemoryAlertTask(int value, int duration) {
-        this.value = value;
+    public MemoryAlertTask(int routing, int duration) {
+        this.routing = routing;
         this.duration = duration;
     }
 
@@ -34,34 +34,27 @@ public class MemoryAlertTask implements Task<Integer>, TaskRoutingProvider {
     }
 
     public Integer getRouting() {
-        return this.value;
+        return this.routing;
     }
 
     private void doMemoryAlert() {
         long startTime = System.currentTimeMillis();
         long currentTime = 0;
-        boolean toStop = false;
-        long heapMaxJvmHelper = JVMHelper.getDetails().getMemoryHeapMax();
+        long maxMemory = JVMHelper.getDetails().getMemoryHeapMax();
         System.out.println("Start writing Bundles to space");
 
         try{
-            while (((currentTime - startTime) < duration * MILLISECONDS_IN_SECOND) && !toStop) {
-                long usedMxBean = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
-                double usedMemoryPercentage =  usedMxBean / 1.0 / heapMaxJvmHelper;
+            while (((currentTime - startTime) < duration * MILLISECONDS_IN_SECOND)) {
+                long usedMemory = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
+                double usedMemoryPercentage = (double) usedMemory / maxMemory;
 
                 if (usedMemoryPercentage < 0.75){
-                    long iterationStartTime = System.currentTimeMillis();
                     Bundle[] bundles = new Bundle[NUM_OF_BUNDLES_TO_WRITE];
                     for (int i = 0; i < NUM_OF_BUNDLES_TO_WRITE ; i++) {
                         bundles[i] = Bundle.createBundle();
                     }
                     gigaSpace.writeMultiple(bundles);
                     currentTime = System.currentTimeMillis();
-                    long differenceTime = currentTime - iterationStartTime;
-
-                    if ((differenceTime + currentTime) > (startTime + duration * MILLISECONDS_IN_SECOND)) {
-                        toStop = true;
-                    }
                 }
                 else {
                     try {
@@ -78,8 +71,8 @@ public class MemoryAlertTask implements Task<Integer>, TaskRoutingProvider {
             System.out.println("Failed with error: " + e);
         } finally {
             gigaSpace.clear(new Bundle());
-            int count2 = gigaSpace.count(new Bundle());
-            System.out.println("After clear: there are " + count2 + " Bundles");
+            int countAfterClear = gigaSpace.count(new Bundle());
+            System.out.println("After clear: there are " + countAfterClear + " Bundles");
         }
     }
 }

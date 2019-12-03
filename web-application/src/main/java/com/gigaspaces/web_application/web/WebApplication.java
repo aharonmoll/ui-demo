@@ -20,6 +20,8 @@ public class WebApplication implements InitializingBean, DisposableBean {
     @GigaSpaceContext
     private GigaSpace gigaSpace;
 
+    private int maxEntriesPerSecond;
+
     public WebApplication() {
     }
 
@@ -29,34 +31,42 @@ public class WebApplication implements InitializingBean, DisposableBean {
 
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         new Thread(this::doQueries).start();
     }
 
     private void doQueries() {
-        while (true) {
-            long startTime = System.currentTimeMillis();
-            long currentTime = 0;
-            boolean toStop = false;
+        int count = 0;
+        long startTime = System.currentTimeMillis();
 
-            while (((currentTime - startTime) < (TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE) && !toStop)) {
-                long iterationStartTime = System.currentTimeMillis();
-                gigaSpace.readMultiple(new SQLQuery<>(Product.class, null), NUM_OF_ENTITIES_TO_READ);
-                currentTime = System.currentTimeMillis();
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        log.info("Max entries: " + maxEntriesPerSecond);
+        while (true) {
+            gigaSpace.readMultiple(new SQLQuery<>(Product.class, null), NUM_OF_ENTITIES_TO_READ);
+            count += NUM_OF_ENTITIES_TO_READ;
+            System.out.println("max entries: " + maxEntriesPerSecond + " count: " + count);
+            if(count >= maxEntriesPerSecond) {
+                long differ = System.currentTimeMillis() - startTime;
+                if(differ < 1000){
+                    try {
+                        Thread.sleep(1000 - differ);
+                    } catch (InterruptedException e) {
+                    }
                 }
-                long differenceTime = currentTime - iterationStartTime;
-                if ((differenceTime + currentTime) > (startTime + TIME_PERIOD_OF_5_MINUTES * MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE)) {
-                    toStop = true;
-                }
+                count = 0;
+                startTime = System.currentTimeMillis();
             }
         }
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
+    }
+
+    public int getMaxEntriesPerSecond() {
+        return maxEntriesPerSecond;
+    }
+
+    public void setMaxEntriesPerSecond(int maxEntriesPerSecond) {
+        this.maxEntriesPerSecond = maxEntriesPerSecond;
     }
 }

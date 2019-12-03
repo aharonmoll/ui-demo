@@ -8,7 +8,13 @@
     <!--
         Spring property configurer which allows us to use system properties (such as user.name).
     -->
-    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <props>
+                <prop key="maxEntriesPerSecond">2000</prop>
+            </props>
+        </property>
+    </bean>
 
     <!--
         A bean representing a space (an IJSpace implementation).
@@ -28,6 +34,7 @@
     <os-core:giga-space id="gigaSpace" space="space"/>
 
     <bean id="WebApplication" class="com.gigaspaces.web_application.web.WebApplication"  depends-on="gigaSpace">
+        <property name="maxEntriesPerSecond" value="${maxEntriesPerSecond}"/>
     </bean>
 
 
