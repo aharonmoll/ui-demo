@@ -41,7 +41,7 @@ public class ProductsLoader implements InitializingBean, DisposableBean {
         int maxEntries = 100_000;
         int current = 0;
 
-        while (current <= maxEntries) {
+        while (current < maxEntries) {
             long iterationStartTime = System.currentTimeMillis();
 
             Product[] products = new Product[NUM_OF_PRODUCTS_TO_LOAD];

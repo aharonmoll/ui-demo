@@ -11,7 +11,7 @@
     <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
             <props>
-                <prop key="maxEntriesPerSecond">2000</prop>
+                <prop key="maxEntriesPerSecond">1000</prop>
             </props>
         </property>
     </bean>

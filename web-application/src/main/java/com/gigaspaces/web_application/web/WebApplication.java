@@ -41,14 +41,16 @@ public class WebApplication implements InitializingBean, DisposableBean {
 
         log.info("Max entries: " + maxEntriesPerSecond);
         while (true) {
-            gigaSpace.readMultiple(new SQLQuery<>(Product.class, null), NUM_OF_ENTITIES_TO_READ);
-            count += NUM_OF_ENTITIES_TO_READ;
+            Product[] products = gigaSpace.readMultiple(new SQLQuery<>(Product.class, null), NUM_OF_ENTITIES_TO_READ);
+            int num = products.length;
+            count += num;
             System.out.println("max entries: " + maxEntriesPerSecond + " count: " + count);
             if(count >= maxEntriesPerSecond) {
                 long differ = System.currentTimeMillis() - startTime;
                 if(differ < 1000){
                     try {
                         Thread.sleep(1000 - differ);
+                        System.out.println("sleep for: " + (1000 - differ));
                     } catch (InterruptedException e) {
                     }
                 }

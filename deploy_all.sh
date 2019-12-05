@@ -22,7 +22,7 @@ ${GS_DIR}/bin/gs.sh pu deploy --partitions=2 --backups=1 ProductsCatalog ${DIRNA
 
 ${GS_DIR}/bin/gs.sh pu deploy ProductsLoader ${DIRNAME}/products-loader/target/products-loader.jar
 
-${GS_DIR}/bin/gs.sh pu deploy --instances=2 WebApplication ${DIRNAME}/web-application/target/web-application.war
+${GS_DIR}/bin/gs.sh pu deploy -p --maxEntriesPerSecond=1000 --instances=2 WebApplication ${DIRNAME}/web-application/target/web-application.war
 
 ${GS_DIR}/bin/gs.sh pu deploy --instances=1 DemoApp ${DIRNAME}/demo-app/target/demo-app.war
 
