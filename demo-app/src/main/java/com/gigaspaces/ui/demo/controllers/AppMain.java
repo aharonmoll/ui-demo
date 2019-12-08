@@ -1,8 +1,6 @@
 package com.gigaspaces.ui.demo.controllers;
 
 
-import com.gigaspaces.rest.client.java.invoker.ApiException;
-
 import java.io.IOException;
 
 public class AppMain {
@@ -26,7 +24,7 @@ public class AppMain {
         }*/
 
 
-        System.out.println(controller.triggerMemoryAlertOnService("ProductsCatalog", 10));
+        System.out.println(controller.triggerMemoryAlertOnService("ProductsCatalog", 60));
 
         try {
             controller.close();
