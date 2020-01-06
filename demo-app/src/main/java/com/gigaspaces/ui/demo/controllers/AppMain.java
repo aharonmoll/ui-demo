@@ -17,19 +17,12 @@ public class AppMain {
             e.printStackTrace();
         }*/
 
-       /* try {
-            System.out.println(controller.triggerCPUAlertOnService("ProductsCatalog", 60));
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }*/
+
+        //System.out.println(controller.triggerCPUAlertOnService("ProductsCatalog", 60));
 
 
         System.out.println(controller.triggerMemoryAlertOnService("ProductsCatalog", 60));
 
-        try {
-            controller.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        controller.close();
     }
 }

@@ -211,7 +211,8 @@ public class DemoController implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
-
+    public void close() {
+        admin.close();
+        spacesProxyMap.clear();
     }
 }
